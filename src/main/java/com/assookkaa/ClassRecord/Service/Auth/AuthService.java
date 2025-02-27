@@ -11,11 +11,9 @@ import com.assookkaa.ClassRecord.Dto.Response.RegisterTeacherResponseDto;
 import com.assookkaa.ClassRecord.Dto.Response.UsernameAndPasswordDtoResponse;
 import com.assookkaa.ClassRecord.Entity.*;
 import com.assookkaa.ClassRecord.Repository.*;
-import com.assookkaa.ClassRecord.Utils.ApiException;
 import com.assookkaa.ClassRecord.Service.OtpService;
+import com.assookkaa.ClassRecord.Utils.ApiException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
@@ -37,7 +33,7 @@ public class AuthService {
     private final CoursesRepository coursesRepository;
 
     @Transactional
-    public RegisterTeacherResponseDto registerUser(RegisterTeacherDto registerTeacherDto) {
+    public RegisterTeacherResponseDto registerTeacher(RegisterTeacherDto registerTeacherDto) {
         Roles role = rolesRepository.findByRoleName("teacher");
         validationService.RoleChecker(role);
         validationService.TeacherValidationChecker(registerTeacherDto.getEmail(), registerTeacherDto.getTeacher_id());

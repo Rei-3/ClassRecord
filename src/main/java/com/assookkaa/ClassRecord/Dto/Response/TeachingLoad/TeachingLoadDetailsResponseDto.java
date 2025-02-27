@@ -8,5 +8,6 @@ public class TeachingLoadDetailsResponseDto {
     private Integer teachingLoadId;
     private Integer subjectId;
     private String schedule;
+    private String key;
     private String section;
 }

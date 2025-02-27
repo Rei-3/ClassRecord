@@ -18,10 +18,13 @@ public class TermSeeder implements DataSeeder {
 
     @Override
     public void seed() {
-        List<Term> term = Arrays.asList(
-                new Term("Midterm"),
-                new Term("Finals")
-        );
-        termRepository.saveAll(term);
+        if (termRepository.count() == 0) {
+            List<Term> term = Arrays.asList(
+                    new Term("Midterm"),
+                    new Term("Finals")
+            );
+            termRepository.saveAll(term);
+        }
+
     }
 }

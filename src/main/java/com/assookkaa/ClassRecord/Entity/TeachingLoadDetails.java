@@ -27,10 +27,16 @@ public class TeachingLoadDetails {
     @Column
     private String schedule;
 
+    @Column
+    private String hashKey;
+
     // Many TeachingLoadDetails belong to one TeachingLoad
     @ManyToOne
     @JoinColumn(name = "teaching_load_id", referencedColumnName = "id", nullable = false)
     private TeachingLoad teachingLoad;
+
+    @OneToMany(mappedBy = "teachingLoadDetails", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List <Grading> grading;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", referencedColumnName = "id", nullable = false)

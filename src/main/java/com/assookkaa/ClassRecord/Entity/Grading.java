@@ -22,7 +22,7 @@ public class Grading {
     @Column
     private Integer id;
 
-    private Double score;
+    private String description;
 
     private Integer numberOfItems;
 
@@ -32,11 +32,11 @@ public class Grading {
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
     private GradeCategory category;
 
-    @OneToOne
-    @JoinColumn(name = "enrollment_id", referencedColumnName = "id", nullable = false)
-    private Enrollments enrollment;
+    @ManyToOne
+    @JoinColumn(name = "teaching_load_detail_id", referencedColumnName = "id" , nullable = false)
+    private TeachingLoadDetails teachingLoadDetails;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "term_id", referencedColumnName = "id", nullable = false)
     private Term term;
 }

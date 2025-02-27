@@ -1,5 +1,7 @@
 package com.assookkaa.ClassRecord.Config.Filter;
 
+import com.assookkaa.ClassRecord.Entity.User;
+import com.assookkaa.ClassRecord.Repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -15,10 +17,15 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    private final UserRepository userRepository;
     private SecretKey secretKey;
 
     @Value("${Secret}")
     String secret;
+
+    public JwtUtil(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @PostConstruct
     public void summonSecretKey() {
@@ -29,6 +36,8 @@ public class JwtUtil {
     private final Integer expiration = 1000 * 60 * 60; // 1 hour
     private final Integer refreshExpiration = 1000 * 60 * 60 * 24 * 5;
 
+    private final Integer classroom_key_expiration = 1000 * 60 * 60 * 24 * 7;
+
     public String generateAccessToken(String username, String otp, Integer userId) {
         return Jwts.builder()
                 .setSubject(username)
@@ -36,6 +45,26 @@ public class JwtUtil {
                 .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String generateClassroomKeyToken(String subject, String classroomId){
+        return Jwts.builder()
+                .setSubject(subject)
+                .claim("classroomId" , classroomId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + classroom_key_expiration))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String regenerateClassroomKeyToken(String subject, String classroomId) {
+        return Jwts.builder()
+                .setSubject(subject)
+                .claim("classroomId", classroomId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + classroom_key_expiration))
                 .signWith(secretKey)
                 .compact();
     }
@@ -67,9 +96,9 @@ public class JwtUtil {
         return claims.get("otp", String.class);
     }
 
-    public Long getUserIdFromToken(String token) {
+    public Integer getUserIdFromToken(String token) {
         Claims claims = getAllClaimsFromToken(token);
-        return claims.get("userId", Long.class);
+        return claims.get("userId", Integer.class);
     }
 
     private boolean isTokenExpired(String token) {
@@ -79,6 +108,16 @@ public class JwtUtil {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String otp = getOtpFromToken(token);
+        final Integer userId = getUserIdFromToken(token);
+
+        User user = userRepository.findByUsername(username);
+
+        Boolean isUsernameValid = username.equals(user.getUsername());
+        Boolean isOtpValid = otp.equals(user.getOtp());
+        Boolean isUserIdValid = userId.equals(user.getId());
+        Boolean isTokenExpired = isTokenExpired(token);
+
+        return isUsernameValid && isOtpValid && isUserIdValid && isTokenExpired;
     }
 }

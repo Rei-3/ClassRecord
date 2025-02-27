@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class GradingCompositionDtoRequest {
-    private double percentage;
+    private Float percentage;
     private Integer categoryId;
     private Integer teachingLoadDetailId;
 }

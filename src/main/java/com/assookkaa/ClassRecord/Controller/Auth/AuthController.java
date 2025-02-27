@@ -21,15 +21,15 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<LoginResponseDto> login (@RequestBody LoginDto loginDto) {
         return ResponseEntity.ok(authService.login(loginDto));
     }
 
-    @PostMapping("/register-teacher")
+    @PostMapping("/api/register-teacher")
     public ResponseEntity<?> registerUser(@RequestBody RegisterTeacherDto registerDto) {
         try {
-            RegisterTeacherResponseDto registeredUser = authService.registerUser(registerDto);
+            RegisterTeacherResponseDto registeredUser = authService.registerTeacher(registerDto);
             return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
         } catch (ApiException e) {
             ErrorDtoResponse errorDtoResponse = new ErrorDtoResponse(e.getStatusCode(), e.getMessage(), e.getErrorType());
@@ -58,7 +58,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/teacher-username-password")
+    @PostMapping("/api/teacher-username-password")
     public ResponseEntity<?> teacherUsernamePassword(
             @RequestParam String otp,
             @RequestBody UsernameAndPasswordDto usernameAndPasswordDto
