@@ -11,7 +11,6 @@ spring.datasource.driver-class-name=
 spring.jpa.show-sql=
 spring.jpa.hibernate.ddl-auto=
 spring.jpa.properties.hibernate.format_sql=
-
 spring.jpa.database=
 spring.jpa.database-platform=
 

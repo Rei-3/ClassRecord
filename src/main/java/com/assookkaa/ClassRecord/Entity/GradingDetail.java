@@ -1,23 +1,16 @@
 package com.assookkaa.ClassRecord.Entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
-
+@Entity
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
-@Entity
-@Table(name = "attendance")
-public class Attendance {
+@Table(name = "grading_detail")
+public class GradingDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +18,14 @@ public class Attendance {
     private Integer id;
 
     @Column(nullable = false)
-    private Boolean isPresent;
-
-    private Date date;
+    private Integer score;
 
     @ManyToOne
-    @JoinColumn(name = "enrollments_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "enrollments", referencedColumnName = "id")
     private Enrollments enrollments;
+
+    @ManyToOne
+    @JoinColumn(name = "grading", referencedColumnName = "id")
+    private Grading grading;
+
 }

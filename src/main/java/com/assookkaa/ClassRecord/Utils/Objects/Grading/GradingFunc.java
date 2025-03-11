@@ -1,4 +1,8 @@
 package com.assookkaa.ClassRecord.Utils.Objects.Grading;
 
-public class GradingFunc {
+import com.assookkaa.ClassRecord.Utils.Objects.Super;
+
+public class GradingFunc extends Super {
+
+
 }

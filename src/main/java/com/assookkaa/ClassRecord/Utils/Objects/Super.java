@@ -4,7 +4,11 @@ import com.assookkaa.ClassRecord.Entity.*;
 import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Utils.ApiException;
 import com.assookkaa.ClassRecord.Utils.Objects.Interface.SuperInterface;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class Super implements SuperInterface {
 
     private final TeacherRepository teacherRepository;
@@ -13,15 +17,6 @@ public class Super implements SuperInterface {
     private final SemRepository semRepository;
     private final GradeCategoryRepository gradeCategoryRepository;
     private final TeachingLoadDetailsRespository teachingLoadDetailsRespository;
-
-    public Super(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository) {
-        this.teacherRepository = teacherRepository;
-        this.studentRepository = studentRepository;
-        this.subjectsRepository = subjectsRepository;
-        this.semRepository = semRepository;
-        this.gradeCategoryRepository = gradeCategoryRepository;
-        this.teachingLoadDetailsRespository = teachingLoadDetailsRespository;
-    }
 
     @Override
     public Teachers findTeacherByUsername(String username) {

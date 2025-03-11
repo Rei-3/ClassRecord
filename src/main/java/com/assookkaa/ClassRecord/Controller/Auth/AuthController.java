@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final JwtUtil jwtUtil;
@@ -21,12 +21,12 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/api/login")
+    @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login (@RequestBody LoginDto loginDto) {
         return ResponseEntity.ok(authService.login(loginDto));
     }
 
-    @PostMapping("/api/register-teacher")
+    @PostMapping("/register-teacher")
     public ResponseEntity<?> registerUser(@RequestBody RegisterTeacherDto registerDto) {
         try {
             RegisterTeacherResponseDto registeredUser = authService.registerTeacher(registerDto);

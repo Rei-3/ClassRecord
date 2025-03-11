@@ -8,18 +8,15 @@ import com.assookkaa.ClassRecord.Entity.TeachingLoadDetails;
 import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Service.Teacher.Interface.GradingCompositionInterface;
 import com.assookkaa.ClassRecord.Utils.Objects.GradingCompostion.GradingCompostionFunc;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class GradingCompositionService extends GradingCompostionFunc implements GradingCompositionInterface {
 
 
     private final GradingCompositionRepository gradingCompositionRepository;
-
-    public GradingCompositionService(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, GradingCompositionRepository gradingCompositionRepository) {
-        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository);
-        this.gradingCompositionRepository = gradingCompositionRepository;
-    }
 
     @Override
     public GradingCompositionDtoResponse addGradingComposition(String token, GradingCompositionDtoRequest gradingCompositionDtoRequest) {

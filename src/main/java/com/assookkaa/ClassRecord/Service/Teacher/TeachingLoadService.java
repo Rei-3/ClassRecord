@@ -8,23 +8,18 @@ import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Service.Teacher.Interface.TeachingLoadImplementation;
 import com.assookkaa.ClassRecord.Utils.ApiException;
 import com.assookkaa.ClassRecord.Utils.Objects.TeachingLoadObject.TeachingLoadFuncs;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 
+@AllArgsConstructor
 public class TeachingLoadService extends TeachingLoadFuncs implements TeachingLoadImplementation {
 
     private final JwtUtil jwtUtil;
 
     private final TeachingLoadRepository teachingLoadRepository;
     private final TeachingLoadDetailsRespository teachingLoadDetailsRepository;
-
-    public TeachingLoadService(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, JwtUtil jwtUtil, TeachingLoadRepository teachingLoadRepository, TeachingLoadDetailsRespository teachingLoadDetailsRepository) {
-        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository);
-        this.jwtUtil = jwtUtil;
-        this.teachingLoadRepository = teachingLoadRepository;
-        this.teachingLoadDetailsRepository = teachingLoadDetailsRepository;
-    }
 
 
     @Override

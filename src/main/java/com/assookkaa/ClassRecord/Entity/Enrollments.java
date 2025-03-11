@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Builder
 @Data
@@ -32,8 +33,10 @@ public class Enrollments {
     @JoinColumn(name = "student_id", referencedColumnName = "id", nullable = false)
     private Students student;
 
+    @OneToMany(mappedBy = "enrollments",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List <GradingDetail> gradingDetails;
 
-    @OneToOne(mappedBy = "enrollment",cascade = CascadeType.ALL, orphanRemoval = true)
-    private Grading grading;
+    @OneToMany(mappedBy = "enrollments", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List <Attendance> attendances;
 
 }
