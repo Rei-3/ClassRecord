@@ -118,6 +118,6 @@ public class JwtUtil {
         Boolean isUserIdValid = userId.equals(user.getId());
         Boolean isTokenExpired = isTokenExpired(token);
 
-        return isUsernameValid && isOtpValid && isUserIdValid && isTokenExpired;
+        return isUsernameValid && isOtpValid && isUserIdValid && !isTokenExpired;
     }
 }

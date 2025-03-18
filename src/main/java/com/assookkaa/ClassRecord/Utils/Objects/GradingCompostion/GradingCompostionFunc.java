@@ -5,13 +5,18 @@ import com.assookkaa.ClassRecord.Dto.Response.GradingComposition.GradingComposit
 import com.assookkaa.ClassRecord.Entity.GradeCategory;
 import com.assookkaa.ClassRecord.Entity.GradingComposition;
 import com.assookkaa.ClassRecord.Entity.TeachingLoadDetails;
-import com.assookkaa.ClassRecord.Utils.Objects.Interface.GradingComposition.GradingCompositionFuncInterface;
+import com.assookkaa.ClassRecord.Repository.*;
+import com.assookkaa.ClassRecord.Utils.Interface.GradingComposition.GradingCompositionFuncInterface;
 import com.assookkaa.ClassRecord.Utils.Objects.Super;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
+
+
 public class GradingCompostionFunc extends Super implements GradingCompositionFuncInterface {
 
+
+    public GradingCompostionFunc(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository);
+    }
 
     @Override
     public GradingComposition buildGradingComposition(GradingCompositionDtoRequest dto, TeachingLoadDetails details, GradeCategory gradeCategory) {

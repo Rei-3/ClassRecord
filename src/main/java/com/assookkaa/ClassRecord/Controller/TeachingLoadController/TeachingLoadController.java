@@ -21,7 +21,7 @@ public class TeachingLoadController {
 
     TokenDecryption tokenDecryption = new TokenDecryption();
 
-    @PostMapping("/add-teaching-load")
+    @PostMapping("/api/add-teaching-load")
     public ResponseEntity<TeachingLoadResponseDto> teachingLoad(@RequestHeader("Authorization") String token,
                                                 @RequestBody  TeachingLoadResponseDto teachingLoadResponseDto) {
 
@@ -31,7 +31,7 @@ public class TeachingLoadController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @PostMapping("/add-teaching-load-details")
+    @PostMapping("/api/add-teaching-load-details")
     public ResponseEntity<TeachingLoadDetailsResponseDto> teachingLoadDetails(
             @RequestHeader ("Authorization") String token,
             @RequestBody  TeachingLoadDetailsResponseDto teachingLoadDetailsResponseDto

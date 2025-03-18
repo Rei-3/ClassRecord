@@ -1,4 +1,4 @@
-package com.assookkaa.ClassRecord.Utils.Objects.Interface;
+package com.assookkaa.ClassRecord.Utils.Interface;
 
 import com.assookkaa.ClassRecord.Entity.*;
 
@@ -9,4 +9,6 @@ public interface SuperInterface {
     Sem findSembyId(Integer semId);
     GradeCategory findGradeCategory(Integer id);
     TeachingLoadDetails findTeachingLoadDetailId(Integer id);
+    TeachingLoadDetails findTeachingLoadDetailByHashKey(String hashKey);
+    Term findTermById(Integer id);
 }

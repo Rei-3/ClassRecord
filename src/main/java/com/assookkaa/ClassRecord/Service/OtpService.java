@@ -2,9 +2,12 @@ package com.assookkaa.ClassRecord.Service;
 
 import com.assookkaa.ClassRecord.Entity.User;
 import com.assookkaa.ClassRecord.Repository.UserRepository;
+import com.assookkaa.ClassRecord.Utils.ApiException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class OtpService {
@@ -28,17 +31,31 @@ public class OtpService {
         return code.toString();
     }
 
+    @Async
+    public CompletableFuture<Boolean> sendOtpEmail (String email) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                String otp = generateOtp();
+                User user = userRepository.findByEmail(email);
 
-    public void sendOtpEmail (String email) {
-        String otp = generateOtp();
-        User user  = userRepository.findByEmail(email);
-        if (user != null) {
-            user.setOtp(otp);
-        }
+                if (user != null) {
+                    user.setOtp(otp);
+                    userRepository.save(user);
+                } else {
+                    System.out.println("USER NOT FOUND");
+                    return false;
+                }
 
-        String subject = "Your OTP Code";
-        String body = "Your OTP Code: " + otp;
-        emailService.sendEmail(email, subject, body);
+                String subject = "Your OTP";
+                String body = "Your OTP Code: " + otp;
+                emailService.sendEmail(email, subject, body);
+
+                return true;
+            } catch (ApiException e) {
+                throw new ApiException("Failed to Send OTP", 69420, "OTP FAILURE");
+
+            }
+        });
     }
 
     public boolean validateOtp(String email, String otp) {

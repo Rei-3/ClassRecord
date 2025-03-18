@@ -2,11 +2,13 @@ package com.assookkaa.ClassRecord.Entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "grading_detail")
@@ -17,8 +19,11 @@ public class GradingDetail {
     @Column
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Integer score;
+
+    @Column(nullable = false)
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "enrollments", referencedColumnName = "id")

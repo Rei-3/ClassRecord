@@ -8,9 +8,9 @@ public class TokenDecryption implements TokenDecryptionInterface {
     TokenData tokenData = new TokenData();
     @Override
     public void tokenDecryption(String token) {
-        if (token.startsWith("Bearer ")){
-            token = token.substring(7);
-            tokenData.setToken(token);
+        if (token != null && token.startsWith("Bearer ")){
+            String extractedToken = token.substring(7);
+            tokenData.setToken(extractedToken);
         }
     }
 

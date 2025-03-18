@@ -6,7 +6,6 @@ import java.util.Date;
 
 @Data
 public class EnrollmentRequestDto {
-    private Integer teachingLoadDetailId;
+    private String hashKey;
     private Date enrollmentDate;
-    private Integer courseId;
 }

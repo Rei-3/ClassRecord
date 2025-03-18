@@ -4,7 +4,9 @@ import com.assookkaa.ClassRecord.Dto.Request.Enrollment.EnrollmentRequestDto;
 import com.assookkaa.ClassRecord.Dto.Response.Enrollment.EnrollmentResponseDto;
 import com.assookkaa.ClassRecord.Service.Enrollment.EnrollmentService;
 import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -19,11 +21,11 @@ public class EnrollmentController {
         this.enrollmentService = enrollmentService;
     }
 
-    @PostMapping("/enroll")
+    @PostMapping("api/enroll")
     public ResponseEntity <EnrollmentResponseDto> enrollToSubject (@RequestHeader ("Authorization") String token,
-                                                                   @RequestBody EnrollmentRequestDto enrollmentRequestDto) {
+                                                                   @Validated @RequestBody EnrollmentRequestDto enrollmentRequestDto) {
         tokenDecryption.tokenDecryption(token);
         EnrollmentResponseDto responseDto = enrollmentService.addEnrollment(tokenDecryption.getToken(), enrollmentRequestDto);
-        return ResponseEntity.ok(responseDto);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 }

@@ -3,12 +3,12 @@ package com.assookkaa.ClassRecord.Utils.Objects;
 import com.assookkaa.ClassRecord.Entity.*;
 import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Utils.ApiException;
-import com.assookkaa.ClassRecord.Utils.Objects.Interface.SuperInterface;
+import com.assookkaa.ClassRecord.Utils.Interface.SuperInterface;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
 @AllArgsConstructor
-@NoArgsConstructor(force = true)
 public class Super implements SuperInterface {
 
     private final TeacherRepository teacherRepository;
@@ -17,6 +17,7 @@ public class Super implements SuperInterface {
     private final SemRepository semRepository;
     private final GradeCategoryRepository gradeCategoryRepository;
     private final TeachingLoadDetailsRespository teachingLoadDetailsRespository;
+    private final TermRepository termRepository;
 
     @Override
     public Teachers findTeacherByUsername(String username) {
@@ -61,4 +62,17 @@ public class Super implements SuperInterface {
         return teachingLoadDetailsRespository.findById(id).orElseThrow(()->
                 new ApiException("Teaching Load Details Not Found", 404, "DETAILS_NOT_FOND"));
     }
+
+    @Override
+    public TeachingLoadDetails findTeachingLoadDetailByHashKey(String hashKey) {
+        return teachingLoadDetailsRespository.findByHashKey(hashKey).orElseThrow(()->
+                new RuntimeException("Subject Not Found"));
+    }
+
+    @Override
+    public Term findTermById(Integer id) {
+        return termRepository.findById(id).orElseThrow(()->
+                new RuntimeException("Term Not Found"));
+    }
+
 }

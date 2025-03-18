@@ -13,6 +13,7 @@ import com.assookkaa.ClassRecord.Repository.StudentRepository;
 import com.assookkaa.ClassRecord.Repository.TeachingLoadDetailsRespository;
 import com.assookkaa.ClassRecord.Service.Enrollment.Interface.EnrollmentInterface;
 import com.assookkaa.ClassRecord.Utils.ApiException;
+import com.assookkaa.ClassRecord.Utils.Objects.Enrollments.EnrollmentsFunc;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,70 +21,36 @@ import java.util.Date;
 @Service
 public class EnrollmentService implements EnrollmentInterface {
 
-    private final CoursesRepository coursesRepository;
-    private final TeachingLoadDetailsRespository teachingLoadDetailsRespository;
     private final JwtUtil jwtUtil;
-    private final StudentRepository studentRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final EnrollmentsFunc enrollmentsFunc;
 
-    public EnrollmentService(CoursesRepository coursesRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, JwtUtil jwtUtil, StudentRepository studentRepository, EnrollmentRepository enrollmentRepository) {
-        this.coursesRepository = coursesRepository;
-        this.teachingLoadDetailsRespository = teachingLoadDetailsRespository;
+    public EnrollmentService(JwtUtil jwtUtil,
+                             EnrollmentRepository enrollmentRepository,
+                             EnrollmentsFunc enrollmentsFunc
+                             ) {
         this.jwtUtil = jwtUtil;
-        this.studentRepository = studentRepository;
         this.enrollmentRepository = enrollmentRepository;
+        this.enrollmentsFunc = enrollmentsFunc;
     }
+
 
     @Override
     public EnrollmentResponseDto addEnrollment(String token, EnrollmentRequestDto enrollmentRequestDto) {
         String username = jwtUtil.getUsernameFromToken(token);
-        Students student = findStudentById(username);
+        Students students = enrollmentsFunc.findStudentByUsername(username);
 
-        TeachingLoadDetails teachingLoadDetails = findTeachingLoadDetailById(enrollmentRequestDto.getTeachingLoadDetailId());
-        Courses course = findCourseById(enrollmentRequestDto.getCourseId());
+        TeachingLoadDetails teachingLoadDetails = enrollmentsFunc.findTeachingLoadDetailByHashKey(enrollmentRequestDto.getHashKey());
 
-        Enrollments enrollments = buildEnrollment(enrollmentRequestDto, student, teachingLoadDetails, course);
-        enrollmentRepository.save(enrollments);
-        
-        return mapToEnrollmentResponse(enrollments);
+        if(enrollmentsFunc.isStudentAlreadyEnrolled(students, teachingLoadDetails)) {
+            throw new ApiException("Yoooo ur already in foo", 69, "Enrolled No Cap");
+        }
+
+        Enrollments enrollmentSave= enrollmentsFunc.buildEnrollment(enrollmentRequestDto, students, teachingLoadDetails);
+        enrollmentRepository.save(enrollmentSave);
+
+
+        return enrollmentsFunc.mapToEnrollmentResponse(enrollmentSave);
     }
 
-    private Students findStudentById(String username) {
-        return studentRepository.findByUsername(username).orElseThrow(
-                ()-> new ApiException("You are not Sigma", 404, "USER_NOT_FOUND")
-        );
-    }
-
-
-    private TeachingLoadDetails findTeachingLoadDetailById (Integer id) {
-        return teachingLoadDetailsRespository.findById(id).orElseThrow(
-                () -> new ApiException("Its Invalid Sigma try something valid", 404, "DETAIL_NOT_FOUND")
-        );
-    }
-
-    private Courses findCourseById (Integer id) {
-        return coursesRepository.findById(id).orElseThrow(
-                () -> new ApiException("What the Skibidi Course got fanum taxed", 404, "COURSE_NOT_FOUND")
-        );
-    }
-
-    private Enrollments buildEnrollment (EnrollmentRequestDto enrollmentRequestDto,
-                                         Students students,
-                                         TeachingLoadDetails teachingLoadDetails,
-                                         Courses courses) {
-        return Enrollments.builder()
-                .added_on(new Date())
-                .teachingLoadDetail(teachingLoadDetails)
-                .student(students)
-                .build();
-    }
-
-    private EnrollmentResponseDto mapToEnrollmentResponse (Enrollments enrollments) {
-        return EnrollmentResponseDto.builder()
-                .id(enrollments.getId())
-                .studentId(enrollments.getStudent().getId())
-                .teachingLoadDetailId(enrollments.getTeachingLoadDetail().getId())
-                .enrollmentDate(enrollments.getAdded_on())
-                .build();
-    }
 }

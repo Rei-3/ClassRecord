@@ -3,16 +3,21 @@ package com.assookkaa.ClassRecord.Utils.Objects.TeachingLoadObject;
 import com.assookkaa.ClassRecord.Dto.Response.TeachingLoad.TeachingLoadDetailsResponseDto;
 import com.assookkaa.ClassRecord.Dto.Response.TeachingLoad.TeachingLoadResponseDto;
 import com.assookkaa.ClassRecord.Entity.*;
-import com.assookkaa.ClassRecord.Utils.Objects.Interface.TeachingLoad.TeachingLoadInterface;
+import com.assookkaa.ClassRecord.Repository.*;
+import com.assookkaa.ClassRecord.Utils.Interface.TeachingLoad.TeachingLoadInterface;
 import com.assookkaa.ClassRecord.Utils.Objects.Super;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-@AllArgsConstructor
+
 public class TeachingLoadFuncs extends Super implements TeachingLoadInterface {
 
+
+    public TeachingLoadFuncs(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository);
+    }
 
     @Override
     public TeachingLoad buildTeachingLoad(TeachingLoadResponseDto dto, Teachers teacher, Sem sem) {

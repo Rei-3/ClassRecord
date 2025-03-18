@@ -58,7 +58,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/api/teacher-username-password")
+    @PostMapping("/teacher-username-password")
     public ResponseEntity<?> teacherUsernamePassword(
             @RequestParam String otp,
             @RequestBody UsernameAndPasswordDto usernameAndPasswordDto

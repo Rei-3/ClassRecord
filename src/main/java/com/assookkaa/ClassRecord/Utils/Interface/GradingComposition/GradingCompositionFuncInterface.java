@@ -1,4 +1,4 @@
-package com.assookkaa.ClassRecord.Utils.Objects.Interface.GradingComposition;
+package com.assookkaa.ClassRecord.Utils.Interface.GradingComposition;
 
 import com.assookkaa.ClassRecord.Dto.Request.GradingComposition.GradingCompositionDtoRequest;
 import com.assookkaa.ClassRecord.Dto.Response.GradingComposition.GradingCompositionDtoResponse;

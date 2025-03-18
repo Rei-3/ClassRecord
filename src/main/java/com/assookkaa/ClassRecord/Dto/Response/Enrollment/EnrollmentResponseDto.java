@@ -12,5 +12,4 @@ public class EnrollmentResponseDto {
     private Integer studentId;
     private Integer teachingLoadDetailId;
     private Date enrollmentDate;
-    private Integer courseId;
 }

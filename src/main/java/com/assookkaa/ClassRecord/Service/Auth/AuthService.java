@@ -49,11 +49,8 @@ public class AuthService {
                 .build();
 
         User savedUser = userRepository.save(user);
-        try {
+
             otpService.sendOtpEmail(savedUser.getEmail());
-        } catch (ApiException apiException) {
-            throw new ApiException("Failed to Send OTP", 69420, "OTP FAILURE");
-        }
 
         RegisterTeacherResponseDto teacherResponseDto = new RegisterTeacherResponseDto();
         teacherResponseDto.setUser_id(savedUser.getId());
@@ -97,11 +94,8 @@ public class AuthService {
                 .role(role)
                 .build();
         User savedUser = userRepository.save(user);
-        try {
+
             otpService.sendOtpEmail(savedUser.getEmail());
-        } catch (ApiException apiException) {
-            throw new ApiException("Failed to Send OTP", 69420, "OTP FAILURE");
-        }
 
         RegisterStudentDtoResponse student = new RegisterStudentDtoResponse();
         student.setFname(savedUser.getFname());

@@ -1,4 +1,4 @@
-package com.assookkaa.ClassRecord.Utils.Objects.Interface.TeachingLoad;
+package com.assookkaa.ClassRecord.Utils.Interface.TeachingLoad;
 
 import com.assookkaa.ClassRecord.Dto.Response.TeachingLoad.TeachingLoadDetailsResponseDto;
 import com.assookkaa.ClassRecord.Dto.Response.TeachingLoad.TeachingLoadResponseDto;

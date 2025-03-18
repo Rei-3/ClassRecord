@@ -5,4 +5,5 @@ import com.assookkaa.ClassRecord.Dto.Response.Enrollment.EnrollmentResponseDto;
 
 public interface EnrollmentInterface {
     EnrollmentResponseDto addEnrollment(String token, EnrollmentRequestDto enrollmentRequestDto);
+
 }

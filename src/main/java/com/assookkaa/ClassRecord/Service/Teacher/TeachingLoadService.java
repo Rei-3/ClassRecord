@@ -8,18 +8,24 @@ import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Service.Teacher.Interface.TeachingLoadImplementation;
 import com.assookkaa.ClassRecord.Utils.ApiException;
 import com.assookkaa.ClassRecord.Utils.Objects.TeachingLoadObject.TeachingLoadFuncs;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 
-@AllArgsConstructor
+
 public class TeachingLoadService extends TeachingLoadFuncs implements TeachingLoadImplementation {
 
     private final JwtUtil jwtUtil;
 
     private final TeachingLoadRepository teachingLoadRepository;
     private final TeachingLoadDetailsRespository teachingLoadDetailsRepository;
+
+    public TeachingLoadService(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, JwtUtil jwtUtil, TeachingLoadRepository teachingLoadRepository, TeachingLoadDetailsRespository teachingLoadDetailsRepository) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository);
+        this.jwtUtil = jwtUtil;
+        this.teachingLoadRepository = teachingLoadRepository;
+        this.teachingLoadDetailsRepository = teachingLoadDetailsRepository;
+    }
 
 
     @Override
@@ -55,46 +61,4 @@ public class TeachingLoadService extends TeachingLoadFuncs implements TeachingLo
         return updateTeachingLoadDetails(teachingLoadDetailsResponseDto, teachingLoadDetails);
     }
 
-
-
-//    private TeachingLoad buildTeachingLoad(TeachingLoadResponseDto dto, Teachers teacher, Sem sem) {
-//        return TeachingLoad.builder()
-//                .added_on(new Date())
-//                .academic_year(dto.getAcademicYear())
-//                .status(dto.getStatus())
-//                .sem(sem)
-//                .teachers(teacher)
-//                .details(new ArrayList<>()) // Initialize empty details list
-//                .build();
-//    }
-//
-//    private TeachingLoadDetails buildTeachingLoadDetails(TeachingLoadDetailsResponseDto dto, TeachingLoad teachingLoad, Subjects subjects) {
-//        return TeachingLoadDetails.builder()
-//                .teachingLoad(teachingLoad)
-//                .subject(subjects)
-//                .section(dto.getSection())
-//                .schedule(dto.getSchedule())
-//                .build();
-//    }
-
-//    private TeachingLoadResponseDto updateTeachingLoad(TeachingLoadResponseDto dto, TeachingLoad teachingLoad, Teachers teachers) {
-//        dto.setTeacherId(teachers.getId());
-//        dto.setStatus(teachingLoad.getStatus());
-//        dto.setSemId(teachingLoad.getSem().getId());
-//        dto.setAcademicYear(teachingLoad.getAcademic_year());
-//        dto.setAddedOn(teachingLoad.getAdded_on());
-//        dto.setId(teachingLoad.getId());
-//        return dto;
-//    }
-
-//    private TeachingLoadDetailsResponseDto updateTeachingLoadDetails(
-//            TeachingLoadDetailsResponseDto dto, TeachingLoadDetails details
-//    ) {
-//        dto.setId(details.getId());
-//        dto.setTeachingLoadId(details.getTeachingLoad().getId());
-//        dto.setSection(details.getSection());
-//        dto.setSubjectId(details.getSubject().getId());
-//        dto.setSchedule(details.getSchedule());
-//        return dto;
-//    }
 }

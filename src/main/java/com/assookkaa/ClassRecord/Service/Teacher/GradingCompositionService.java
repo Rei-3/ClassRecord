@@ -12,11 +12,17 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+
 public class GradingCompositionService extends GradingCompostionFunc implements GradingCompositionInterface {
 
 
     private final GradingCompositionRepository gradingCompositionRepository;
+
+    public GradingCompositionService(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, GradingCompositionRepository gradingCompositionRepository) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository);
+        this.gradingCompositionRepository = gradingCompositionRepository;
+    }
+
 
     @Override
     public GradingCompositionDtoResponse addGradingComposition(String token, GradingCompositionDtoRequest gradingCompositionDtoRequest) {
