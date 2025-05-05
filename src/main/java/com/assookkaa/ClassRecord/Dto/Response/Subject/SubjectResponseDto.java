@@ -10,4 +10,5 @@ public class SubjectResponseDto {
     private String subjectDesc;
     private String subjectName;
     private Integer units;
+
 }

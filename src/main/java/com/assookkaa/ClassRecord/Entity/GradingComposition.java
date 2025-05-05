@@ -22,7 +22,7 @@ public class GradingComposition {
     @Column
     private Integer id;
 
-    private Float percentage;
+    private Double percentage;
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)

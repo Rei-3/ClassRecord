@@ -18,8 +18,8 @@ public class GradingCompositionService extends GradingCompostionFunc implements 
 
     private final GradingCompositionRepository gradingCompositionRepository;
 
-    public GradingCompositionService(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, GradingCompositionRepository gradingCompositionRepository) {
-        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository);
+    public GradingCompositionService(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository, GradingCompositionRepository gradingCompositionRepository) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository);
         this.gradingCompositionRepository = gradingCompositionRepository;
     }
 
@@ -38,6 +38,22 @@ public class GradingCompositionService extends GradingCompostionFunc implements 
 
         return mapToGradingCompositionDtoResponse(gradingComposition);
         
+    }
+
+    public GradingCompositionDtoResponse editGradingComposition(String token, Integer gradingCompositionId, GradingCompositionDtoRequest gradingCompositionDtoRequest) {
+        GradingComposition existingComp = gradingCompositionRepository.findById(gradingCompositionId)
+                .orElseThrow(()-> new RuntimeException("Grading Composition not found"));
+
+        TeachingLoadDetails teachingLoadDetails = findTeachingLoadDetailId(gradingCompositionDtoRequest.getTeachingLoadDetailId());
+        GradeCategory gradeCategory = findGradeCategory(gradingCompositionDtoRequest.getCategoryId());
+
+        existingComp.setPercentage(gradingCompositionDtoRequest.getPercentage());
+        existingComp.setTeachingLoadDetail(teachingLoadDetails);
+        existingComp.setCategory(gradeCategory);
+
+        gradingCompositionRepository.save(existingComp);
+
+        return mapToGradingCompositionDtoResponse(existingComp);
     }
 
 //    private TeachingLoadDetails findTeachingLoadDetailId(Integer id) {

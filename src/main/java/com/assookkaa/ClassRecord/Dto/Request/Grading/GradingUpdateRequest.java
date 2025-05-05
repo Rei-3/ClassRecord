@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class GradingUpdateRequest {
     private Integer gradingDetailId;
-    private Integer score;
+    private Double score;
 }

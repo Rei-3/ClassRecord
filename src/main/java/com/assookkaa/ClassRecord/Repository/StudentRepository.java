@@ -12,4 +12,6 @@ public interface StudentRepository extends JpaRepository<Students, Integer> {
 
     @Query("SELECT s FROM Students s JOIN s.student u WHERE u.username = :username")
     Optional<Students> findByUsername(@Param("username") String username);
+
+    Optional <Students> findByStudentId(Integer studentId);
 }

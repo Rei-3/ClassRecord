@@ -6,8 +6,11 @@ import com.assookkaa.ClassRecord.Entity.TeachingLoadDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EnrollmentRepository extends JpaRepository<Enrollments, Integer> {
     Boolean existsByStudentAndTeachingLoadDetail(Students students, TeachingLoadDetails teachingLoadDetails);
-    List<Enrollments> findByTeachingLoadDetailId(Integer teachingLoadDetailId);
+    List <Enrollments> findByTeachingLoadDetailId(Integer teachingLoadDetailId);
+
+    List <Enrollments> findByStudentId (Integer studentId);
 }

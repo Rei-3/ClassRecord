@@ -28,7 +28,8 @@ public class Term {
     @OneToMany(mappedBy = "term", cascade = CascadeType.ALL, orphanRemoval = true)
     private List <Grading> grading;
 
-    public Term(String term_type) {
-        this.term_type = term_type;
+    public Term(Integer id) {
+        this.id = id;
     }
+
 }

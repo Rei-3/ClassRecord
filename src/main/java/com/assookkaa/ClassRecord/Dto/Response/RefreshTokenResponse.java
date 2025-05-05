@@ -1,4 +1,4 @@
-package com.assookkaa.ClassRecord.Utils.Token.Data;
+package com.assookkaa.ClassRecord.Dto.Response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TokenData {
-    private String token;
+public class RefreshTokenResponse {
+    private String accessToken;
 }

@@ -5,10 +5,7 @@ import com.assookkaa.ClassRecord.Dto.Request.LoginDto;
 import com.assookkaa.ClassRecord.Dto.Request.RegisterStudentDto;
 import com.assookkaa.ClassRecord.Dto.Request.RegisterTeacherDto;
 import com.assookkaa.ClassRecord.Dto.Request.UsernameAndPasswordDto;
-import com.assookkaa.ClassRecord.Dto.Response.LoginResponseDto;
-import com.assookkaa.ClassRecord.Dto.Response.RegisterStudentDtoResponse;
-import com.assookkaa.ClassRecord.Dto.Response.RegisterTeacherResponseDto;
-import com.assookkaa.ClassRecord.Dto.Response.UsernameAndPasswordDtoResponse;
+import com.assookkaa.ClassRecord.Dto.Response.*;
 import com.assookkaa.ClassRecord.Entity.*;
 import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Service.OtpService;
@@ -147,12 +144,29 @@ public class AuthService {
         if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()))
         {
             String token = jwtUtil.generateAccessToken(user.getUsername(), user.getOtp(), user.getId());
-            return new LoginResponseDto(user.getUsername(), token);
+            String refresh = jwtUtil.generateRefreshToken(user.getUsername());
+            return new LoginResponseDto(user.getUsername(), token, refresh);
         }
         throw new ApiException("Invalid username or password", 403, "INVALID_USERNAME_OR_PASSWORD");
     }
 
     private Courses findCourseId (Integer courseId) {
         return coursesRepository.findById(courseId).orElseThrow(() -> new ApiException("Course not found", 404, "COURSE_NOT_FOUND"));
+    }
+    public RefreshTokenResponse RefreshToken (String token){
+
+        if(jwtUtil.isTokenExpired(token)) {
+            throw new RuntimeException("Refresh token expired");
+        }
+        String usernameFromToken = jwtUtil.getUsernameFromToken(token);
+        User user = userRepository.findByUsername(usernameFromToken);
+        if(user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        String newAccessToken = jwtUtil.generateAccessToken(user.getUsername(),user.getOtp(),user.getId());
+
+        return new RefreshTokenResponse(newAccessToken);
+
     }
 }

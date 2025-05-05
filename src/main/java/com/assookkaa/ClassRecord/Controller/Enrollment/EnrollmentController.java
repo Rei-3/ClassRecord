@@ -24,8 +24,8 @@ public class EnrollmentController {
     @PostMapping("api/enroll")
     public ResponseEntity <EnrollmentResponseDto> enrollToSubject (@RequestHeader ("Authorization") String token,
                                                                    @Validated @RequestBody EnrollmentRequestDto enrollmentRequestDto) {
-        tokenDecryption.tokenDecryption(token);
-        EnrollmentResponseDto responseDto = enrollmentService.addEnrollment(tokenDecryption.getToken(), enrollmentRequestDto);
+        String extractedToken = tokenDecryption.tokenDecryption(token);
+        EnrollmentResponseDto responseDto = enrollmentService.addEnrollment(extractedToken, enrollmentRequestDto);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 }

@@ -1,14 +1,12 @@
 package com.assookkaa.ClassRecord.Dto.Response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class LoginResponseDto {
     private String username;
     private String token;
-
-    public LoginResponseDto(String username, String token) {
-        this.username = username;
-        this.token = token;
-    }
+    private String refreshToken;
 }

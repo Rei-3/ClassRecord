@@ -10,5 +10,5 @@ public class GradingDetailsResponse {
     private String status;
     private Integer enrollmentId;
     private Integer gradingId;
-    private Integer score;
+    private Double score;
 }

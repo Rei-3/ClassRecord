@@ -20,8 +20,8 @@ public class TermSeeder implements DataSeeder {
     public void seed() {
         if (termRepository.count() == 0) {
             List<Term> term = Arrays.asList(
-                    new Term("Midterm"),
-                    new Term("Finals")
+                    new Term(1),
+                    new Term(2)
             );
             termRepository.saveAll(term);
         }

@@ -16,9 +16,9 @@ import java.util.Date;
 public class EnrollmentsFunc extends Super implements EnrollmentsFuncInterface {
     private final EnrollmentRepository enrollmentRepository;
 
-    public EnrollmentsFunc(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository) {
-        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository);
-        this.enrollmentRepository = enrollmentRepository;
+    public EnrollmentsFunc(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository, EnrollmentRepository enrollmentRepository1) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository);
+        this.enrollmentRepository = enrollmentRepository1;
     }
 
 

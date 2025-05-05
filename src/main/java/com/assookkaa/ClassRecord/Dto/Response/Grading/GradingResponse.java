@@ -16,5 +16,5 @@ public class GradingResponse {
     private Integer termId;
     private Integer teachingLoadDetailId;
     private Date date;
-    private List<GradingDetailsResponse> details;
+
 }

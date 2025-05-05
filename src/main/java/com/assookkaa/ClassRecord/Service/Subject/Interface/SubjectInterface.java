@@ -1,0 +1,9 @@
+package com.assookkaa.ClassRecord.Service.Subject.Interface;
+
+import com.assookkaa.ClassRecord.Dto.Response.GradingComposition.GradingCompositionWithCategoryForTeachingLoadDetailResponse;
+
+public interface SubjectInterface {
+
+    GradingCompositionWithCategoryForTeachingLoadDetailResponse getGradingCompositionWithCategoryForTeachingLoadDetail(Integer teachingLoadDetailId);
+
+}

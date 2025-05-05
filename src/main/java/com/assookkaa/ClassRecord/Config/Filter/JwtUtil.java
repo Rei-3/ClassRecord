@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtUtil {
@@ -38,21 +39,11 @@ public class JwtUtil {
 
     private final Integer classroom_key_expiration = 1000 * 60 * 60 * 24 * 7;
 
-    public String generateAccessToken(String username, String otp, Integer userId) {
-        return Jwts.builder()
-                .setSubject(username)
-                .claim("otp", otp)
-                .claim("userId", userId)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(secretKey)
-                .compact();
-    }
-
     public String generateClassroomKeyToken(String subject, String classroomId){
         return Jwts.builder()
                 .setSubject(subject)
                 .claim("classroomId" , classroomId)
+                .claim("chineseSpy", UUID.randomUUID().toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + classroom_key_expiration))
                 .signWith(secretKey)
@@ -65,6 +56,17 @@ public class JwtUtil {
                 .claim("classroomId", classroomId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + classroom_key_expiration))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String generateAccessToken(String username, String otp, Integer userId) {
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("otp", otp)
+                .claim("userId", userId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(secretKey)
                 .compact();
     }
@@ -101,7 +103,7 @@ public class JwtUtil {
         return claims.get("userId", Integer.class);
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         Date expiration = getAllClaimsFromToken(token).getExpiration();
         return expiration.before(new Date());
     }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Data
 @Builder
@@ -20,10 +22,7 @@ public class GradingDetail {
     private Integer id;
 
     @Column(nullable = true)
-    private Integer score;
-
-    @Column(nullable = false)
-    private String status;
+    private Double score;
 
     @ManyToOne
     @JoinColumn(name = "enrollments", referencedColumnName = "id")
@@ -32,5 +31,8 @@ public class GradingDetail {
     @ManyToOne
     @JoinColumn(name = "grading", referencedColumnName = "id")
     private Grading grading;
+
+    @Column
+    private Date recordedOn;
 
 }

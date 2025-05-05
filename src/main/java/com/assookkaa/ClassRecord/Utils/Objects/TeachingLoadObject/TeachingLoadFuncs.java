@@ -7,16 +7,17 @@ import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Utils.Interface.TeachingLoad.TeachingLoadInterface;
 import com.assookkaa.ClassRecord.Utils.Objects.Super;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-
+@Component
 public class TeachingLoadFuncs extends Super implements TeachingLoadInterface {
 
 
-    public TeachingLoadFuncs(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository) {
-        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository);
+    public TeachingLoadFuncs(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository);
     }
 
     @Override

@@ -3,30 +3,43 @@ package com.assookkaa.ClassRecord.Controller.Auth;
 import com.assookkaa.ClassRecord.Config.Filter.JwtUtil;
 import com.assookkaa.ClassRecord.Dto.Request.*;
 import com.assookkaa.ClassRecord.Dto.Response.*;
+import com.assookkaa.ClassRecord.Entity.User;
+import com.assookkaa.ClassRecord.Repository.UserRepository;
 import com.assookkaa.ClassRecord.Utils.ApiException;
 import com.assookkaa.ClassRecord.Service.Auth.AuthService;
+import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name= "Auth", description = "Auth operations")
 public class AuthController {
 
-    private final JwtUtil jwtUtil;
     private final AuthService authService;
+    private final JwtUtil jwtUtil;
+    private final TokenDecryption tokenDecryption;
 
-    public AuthController(JwtUtil jwtUtil, AuthService authService) {
-        this.jwtUtil = jwtUtil;
+
+    public AuthController(JwtUtil jwtUtil, AuthService authService, TokenDecryption tokenDecryption) {
         this.authService = authService;
+        this.jwtUtil = jwtUtil;
+        this.tokenDecryption = tokenDecryption;
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login to the App", description = "Enter credentials to login")
     public ResponseEntity<LoginResponseDto> login (@RequestBody LoginDto loginDto) {
         return ResponseEntity.ok(authService.login(loginDto));
     }
 
     @PostMapping("/register-teacher")
+    @Operation(summary = "Register Teacher", description = "Enter credentials for registration")
     public ResponseEntity<?> registerUser(@RequestBody RegisterTeacherDto registerDto) {
         try {
             RegisterTeacherResponseDto registeredUser = authService.registerTeacher(registerDto);
@@ -38,6 +51,7 @@ public class AuthController {
     }
 
     @PostMapping("/register-student")
+    @Operation(summary = "Register Student", description = "Enter credentials for student registration")
     public ResponseEntity<?> registerStudent(@RequestBody RegisterStudentDto registerDto) {
         try {
             RegisterStudentDtoResponse registerStudent = authService.registerStudent(registerDto);
@@ -49,6 +63,7 @@ public class AuthController {
     }
 
     @PostMapping("/verify-otp")
+    @Operation(summary = "Verify OTP if its real", description = "Verify OTP")
     public ResponseEntity<?> verifyOtp(@RequestParam String otp) {
         boolean optValid = authService.otpValidation(otp);
         if (optValid) {
@@ -59,6 +74,7 @@ public class AuthController {
     }
 
     @PostMapping("/teacher-username-password")
+    @Operation(summary = "Teacher Username and Password", description = "Enter Teacher Username and Password")
     public ResponseEntity<?> teacherUsernamePassword(
             @RequestParam String otp,
             @RequestBody UsernameAndPasswordDto usernameAndPasswordDto
@@ -79,6 +95,7 @@ public class AuthController {
     }
 
     @PostMapping("/student-username-password")
+    @Operation(summary = "Student ID and Password", description = "Enter Student ID and Password")
     public ResponseEntity<?> studentUsernamePassword(
             @RequestParam String otp,
             @RequestBody UsernameAndPasswordDto usernameAndPasswordDto) {
@@ -96,7 +113,18 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        try {
+            String token = refreshTokenRequest.getRefreshToken();
 
+            RefreshTokenResponse response = authService.RefreshToken(token);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
 
 

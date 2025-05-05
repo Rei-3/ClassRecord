@@ -24,8 +24,8 @@ public class GradingCompositionController {
     public ResponseEntity<GradingCompositionDtoResponse>addGradingComposition(@RequestHeader ("Authorization")String token,
                                                                               @RequestBody GradingCompositionDtoRequest gradingCompositionDtoRequest)
     {
-        tokenDecryption.tokenDecryption(token);
-        GradingCompositionDtoResponse response = gradingCompositionService.addGradingComposition(tokenDecryption.getToken(), gradingCompositionDtoRequest);
+        String extractedToken = tokenDecryption.tokenDecryption(token);
+        GradingCompositionDtoResponse response = gradingCompositionService.addGradingComposition(extractedToken, gradingCompositionDtoRequest);
         return ResponseEntity.ok(response);
     }
 

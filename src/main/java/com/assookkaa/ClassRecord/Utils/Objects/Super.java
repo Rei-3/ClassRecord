@@ -18,6 +18,7 @@ public class Super implements SuperInterface {
     private final GradeCategoryRepository gradeCategoryRepository;
     private final TeachingLoadDetailsRespository teachingLoadDetailsRespository;
     private final TermRepository termRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     @Override
     public Teachers findTeacherByUsername(String username) {
@@ -74,5 +75,7 @@ public class Super implements SuperInterface {
         return termRepository.findById(id).orElseThrow(()->
                 new RuntimeException("Term Not Found"));
     }
+
+
 
 }
