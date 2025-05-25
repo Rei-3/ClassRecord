@@ -20,10 +20,10 @@ public class GradeCategorySeeder implements DataSeeder {
     public void seed (){
         if(gradeCategoryRepository.count() == 0){
             List<GradeCategory> gradeCategory = Arrays.asList(
-                    new GradeCategory("Attendance"),
                     new GradeCategory("Quiz"),
+                    new GradeCategory("Activity"),
                     new GradeCategory("Exam"),
-                    new GradeCategory("Activity")
+                    new GradeCategory("Attendance")
             );
             gradeCategoryRepository.saveAll(gradeCategory);
         }

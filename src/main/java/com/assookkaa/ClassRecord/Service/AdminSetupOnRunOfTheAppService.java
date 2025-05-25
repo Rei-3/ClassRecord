@@ -24,6 +24,7 @@ public class AdminSetupOnRunOfTheAppService {
         this.rolesRepository = rolesRepository;
         this.passwordEncoder = passwordEncoder;
     }
+    private String email;
 
     @Transactional
     public void SummonAdmin(){
@@ -37,7 +38,7 @@ public class AdminSetupOnRunOfTheAppService {
             adminUser.setMname("Langley");
             adminUser.setLname("Soryu");
             adminUser.setGender(true);
-            adminUser.setOtp(null);
+            adminUser.setOtp("I4M7H3G0D");
             adminUser.setEmail("dbeast415@gmail.com");
             adminUser.setPassword(passwordEncoder.encode("12345678"));
             adminUser.setUsername("Assookkaa");

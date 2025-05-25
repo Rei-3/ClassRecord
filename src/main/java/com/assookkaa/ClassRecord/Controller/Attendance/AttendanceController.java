@@ -1,28 +1,30 @@
 package com.assookkaa.ClassRecord.Controller.Attendance;
+import com.assookkaa.ClassRecord.Dto.Request.Attendance.AttendanceBuildRequest;
+import com.assookkaa.ClassRecord.Dto.Request.Attendance.AttendanceRecord;
 
-import com.assookkaa.ClassRecord.Dto.Request.Attendance.AttendanceBatchBuildRequest;
-import com.assookkaa.ClassRecord.Dto.Request.Attendance.AttendanceRecordRequest;
-import com.assookkaa.ClassRecord.Dto.Request.Grading.GradingDetailRequest;
-import com.assookkaa.ClassRecord.Dto.Request.Grading.GradingRequest;
 import com.assookkaa.ClassRecord.Dto.Response.Attendance.AttendanceResponse;
-import com.assookkaa.ClassRecord.Dto.Response.Grading.BatchGradingDetailsResponse;
+
 import com.assookkaa.ClassRecord.Dto.Response.Grading.GradingResponse;
 import com.assookkaa.ClassRecord.Service.Attendance.AttendanceService;
-import com.assookkaa.ClassRecord.Utils.ApiResponse;
+
+import com.assookkaa.ClassRecord.Service.Attendance.Interface.AttendanceInterface;
 import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/attendance")
+@RequestMapping("/api/teacher/attendance")
 public class AttendanceController {
 
     private final TokenDecryption tokenDecryption;
-    private final AttendanceService attendanceService;
+    private final AttendanceInterface attendanceService;
 
     public AttendanceController(TokenDecryption tokenDecryption, AttendanceService attendanceService) {
         this.tokenDecryption = tokenDecryption;
@@ -30,24 +32,46 @@ public class AttendanceController {
     }
 
     //Post
+    @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("/make-attendance-sheet")
-    public ResponseEntity<GradingResponse> makeAttendance(@RequestHeader ("Authorization") String token,
-                                                          @RequestBody GradingRequest gradingRequest) {
+    public ResponseEntity<GradingResponse> makeAttendance(
+            @RequestHeader ("Authorization") String token,
+            @RequestBody AttendanceBuildRequest request) {
         tokenDecryption.tokenDecryption(token);
         try {
-            GradingResponse response = attendanceService.buildAttendance(gradingRequest);
+            GradingResponse response = attendanceService.buildAttendance(request);
             return ResponseEntity.ok(response);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
-    //Put
-    @PutMapping("/record-attendance")
-    public ResponseEntity<ApiResponse<AttendanceResponse>> recordPresent (@RequestHeader ("Authorization") String token,
-                                                                          @RequestBody AttendanceRecordRequest request){
+    //recored
+    @PreAuthorize("hasRole('TEACHER')")
+    @PostMapping("/record-attendance")
+    public ResponseEntity<Map<String, String>> recordPresent(
+            @RequestHeader("Authorization") String token,
+            @RequestBody AttendanceRecord request
+    ) {
+        tokenDecryption.tokenDecryption(token);
+        attendanceService.recordAttendance(request);
 
-        AttendanceResponse response = attendanceService.markAsPresent(request);
-        return ResponseEntity.ok(new ApiResponse<>("Attendance marked successfully", response));
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Attendance Recorded");
+        return ResponseEntity.ok(response);
+    }
+
+    //Get
+    @PreAuthorize("hasRole('TEACHER')")
+    @GetMapping("/list-of-attendance/{teachingLoadDetailId}/{termId}")
+    public List <AttendanceResponse> listAttendance(
+            @RequestHeader ("Authorization") String token,
+            @PathVariable Integer teachingLoadDetailId,
+            @PathVariable Integer termId
+
+    ){
+        tokenDecryption.tokenDecryption(token);
+        List<AttendanceResponse> response = attendanceService.getAllAttendanceInTeachingLoadDetailAndTerm(teachingLoadDetailId, termId);
+        return ResponseEntity.ok(response).getBody();
     }
 }

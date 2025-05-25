@@ -42,6 +42,9 @@ public class SecurityConfig {
                                 "api/auth/**",
                                 "/helloworld",
                                 "/show-choices/**").permitAll()
+                        .requestMatchers("/api/teacher/**").hasRole("TEACHER")
+                        .requestMatchers("/api/student/**").hasRole("STUDENT")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

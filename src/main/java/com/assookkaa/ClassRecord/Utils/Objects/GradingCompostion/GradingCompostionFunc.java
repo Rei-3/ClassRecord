@@ -8,14 +8,14 @@ import com.assookkaa.ClassRecord.Entity.TeachingLoadDetails;
 import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Utils.Interface.GradingComposition.GradingCompositionFuncInterface;
 import com.assookkaa.ClassRecord.Utils.Objects.Super;
-
+import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
 
 
 public class GradingCompostionFunc extends Super implements GradingCompositionFuncInterface {
 
 
-    public GradingCompostionFunc(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository) {
-        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository);
+    public GradingCompostionFunc(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository, TokenDecryption tokenDecryption) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository, tokenDecryption);
     }
 
     @Override

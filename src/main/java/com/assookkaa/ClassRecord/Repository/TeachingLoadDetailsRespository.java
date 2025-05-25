@@ -10,7 +10,6 @@ public interface TeachingLoadDetailsRespository extends JpaRepository<TeachingLo
 
     Optional <TeachingLoadDetails> findByHashKey(String hashKey);
     List <TeachingLoadDetails> findByEnrollmentsId (Integer enrollmentsId);
-
-    TeachingLoadDetails findByEnrollments_Id(Integer enrollmentsId);
+    List <TeachingLoadDetails> findByEnrollmentsIdIn (List<Integer> enrollmentsId);
     List <TeachingLoadDetails> findByTeachingLoadId (Integer teachingLoadId);
 }

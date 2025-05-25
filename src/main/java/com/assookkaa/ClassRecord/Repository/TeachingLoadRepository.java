@@ -9,4 +9,6 @@ import java.util.List;
 public interface TeachingLoadRepository extends JpaRepository<TeachingLoad, Integer> {
     List<TeachingLoad> findByTeachersId(Integer teacherId);
 
+    TeachingLoad findByTeachers_Id(Integer teacherId);
+
 }

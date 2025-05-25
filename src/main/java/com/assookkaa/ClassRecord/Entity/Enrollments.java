@@ -36,7 +36,5 @@ public class Enrollments {
     @OneToMany(mappedBy = "enrollments",cascade = CascadeType.ALL, orphanRemoval = true)
     private List <GradingDetail> gradingDetails;
 
-    @OneToMany(mappedBy = "enrollments", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List <Attendance> attendances;
 
 }

@@ -1,6 +1,7 @@
 package com.assookkaa.ClassRecord.Service.Teacher;
 
 import com.assookkaa.ClassRecord.Dto.Request.GradingComposition.GradingCompositionDtoRequest;
+import com.assookkaa.ClassRecord.Dto.Request.GradingComposition.GradingCompositionEditRequest;
 import com.assookkaa.ClassRecord.Dto.Response.GradingComposition.GradingCompositionDtoResponse;
 import com.assookkaa.ClassRecord.Entity.GradeCategory;
 import com.assookkaa.ClassRecord.Entity.GradingComposition;
@@ -8,6 +9,7 @@ import com.assookkaa.ClassRecord.Entity.TeachingLoadDetails;
 import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Service.Teacher.Interface.GradingCompositionInterface;
 import com.assookkaa.ClassRecord.Utils.Objects.GradingCompostion.GradingCompostionFunc;
+import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,8 @@ public class GradingCompositionService extends GradingCompostionFunc implements 
 
     private final GradingCompositionRepository gradingCompositionRepository;
 
-    public GradingCompositionService(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository, GradingCompositionRepository gradingCompositionRepository) {
-        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository);
+    public GradingCompositionService(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository, TokenDecryption tokenDecryption, GradingCompositionRepository gradingCompositionRepository) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository, tokenDecryption);
         this.gradingCompositionRepository = gradingCompositionRepository;
     }
 
@@ -40,17 +42,11 @@ public class GradingCompositionService extends GradingCompostionFunc implements 
         
     }
 
-    public GradingCompositionDtoResponse editGradingComposition(String token, Integer gradingCompositionId, GradingCompositionDtoRequest gradingCompositionDtoRequest) {
-        GradingComposition existingComp = gradingCompositionRepository.findById(gradingCompositionId)
+    public GradingCompositionDtoResponse editGradingComposition( GradingCompositionEditRequest dto) {
+        GradingComposition existingComp = gradingCompositionRepository.findById(dto.getGradingCompositionId())
                 .orElseThrow(()-> new RuntimeException("Grading Composition not found"));
 
-        TeachingLoadDetails teachingLoadDetails = findTeachingLoadDetailId(gradingCompositionDtoRequest.getTeachingLoadDetailId());
-        GradeCategory gradeCategory = findGradeCategory(gradingCompositionDtoRequest.getCategoryId());
-
-        existingComp.setPercentage(gradingCompositionDtoRequest.getPercentage());
-        existingComp.setTeachingLoadDetail(teachingLoadDetails);
-        existingComp.setCategory(gradeCategory);
-
+        existingComp.setPercentage(dto.getPercentage());
         gradingCompositionRepository.save(existingComp);
 
         return mapToGradingCompositionDtoResponse(existingComp);

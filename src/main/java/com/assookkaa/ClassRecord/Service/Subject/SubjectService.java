@@ -1,15 +1,14 @@
 package com.assookkaa.ClassRecord.Service.Subject;
 
+import com.assookkaa.ClassRecord.Config.Filter.JwtUtil;
 import com.assookkaa.ClassRecord.Dto.Response.GradingComposition.CategoryDto;
 import com.assookkaa.ClassRecord.Dto.Response.GradingComposition.GradingCompositionWithCategoryForTeachingLoadDetailResponse;
 import com.assookkaa.ClassRecord.Dto.Response.Subject.SubjectDto;
 
-import com.assookkaa.ClassRecord.Entity.GradeCategory;
-import com.assookkaa.ClassRecord.Entity.GradingComposition;
-import com.assookkaa.ClassRecord.Entity.Subjects;
-import com.assookkaa.ClassRecord.Repository.GradeCategoryRepository;
-import com.assookkaa.ClassRecord.Repository.GradingCompositionRepository;
-import com.assookkaa.ClassRecord.Repository.SubjectsRepository;
+import com.assookkaa.ClassRecord.Dto.Response.User.StudentUser;
+import com.assookkaa.ClassRecord.Dto.Response.User.TeacherUser;
+import com.assookkaa.ClassRecord.Entity.*;
+import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Service.Subject.Interface.SubjectInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,11 @@ public class SubjectService implements SubjectInterface {
     private final SubjectsRepository subjectsRepository;
     private final GradingCompositionRepository gradingCompositionRepository;
     private final GradeCategoryRepository gradeCategoryRepository;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
+    private final CoursesRepository coursesRepository;
 
     public List<SubjectDto> getAllSubjects() {
         List<Subjects> subjects = subjectsRepository.findAll();
@@ -74,4 +78,50 @@ public class SubjectService implements SubjectInterface {
             teachingLoadDetailId, resp
         );
     }
+
+    public TeacherUser getTeacherUser(String token) {
+        String username = jwtUtil.getUsernameFromToken(token);
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found.");
+        }
+
+        Teachers teacherId = teacherRepository.findTeacherByUsername(username);
+        if (teacherId == null) {
+            throw new IllegalArgumentException("Teacher not found.");
+        }
+
+        return TeacherUser.builder()
+                .email(user.getEmail())
+                .dob(user.getDob().toString())
+                .gender(user.getGender())
+                .teacherId(teacherId.getTeacherId())
+                .build();
+    }
+
+    public StudentUser getStudentInfo(String token) {
+        String username = jwtUtil.getUsernameFromToken(token);
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found.");
+        }
+
+        Optional<Students> student = studentRepository.findByUsername(username);
+        Students studentEntity = student.orElseThrow(() -> new IllegalArgumentException("Student not found."));
+
+        Courses courses = coursesRepository.findByStudentsId(studentEntity.getId());
+        if (courses == null) {
+            throw new IllegalArgumentException("Course data not found.");
+        }
+
+        return StudentUser.builder()
+                .email(user.getEmail())
+                .dob(user.getDob().toString())
+                .gender(user.getGender())
+                .course(courses.getCourse_name())
+                .build();
+    }
+
 }

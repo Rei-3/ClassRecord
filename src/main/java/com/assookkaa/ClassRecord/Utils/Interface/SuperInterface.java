@@ -11,5 +11,6 @@ public interface SuperInterface {
     TeachingLoadDetails findTeachingLoadDetailId(Integer id);
     TeachingLoadDetails findTeachingLoadDetailByHashKey(String hashKey);
     Term findTermById(Integer id);
+    void checkKeys (String API_KEY, String SECRET_KEY);
 
 }

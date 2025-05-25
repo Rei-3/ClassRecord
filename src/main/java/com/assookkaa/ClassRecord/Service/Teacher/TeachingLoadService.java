@@ -5,6 +5,7 @@ import com.assookkaa.ClassRecord.Dto.Response.Subject.SubjectResponseDto;
 import com.assookkaa.ClassRecord.Dto.Response.TeachingLoad.*;
 import com.assookkaa.ClassRecord.Entity.*;
 import com.assookkaa.ClassRecord.Repository.*;
+import com.assookkaa.ClassRecord.Service.OtpService;
 import com.assookkaa.ClassRecord.Service.Teacher.Interface.TeachingLoadImplementation;
 import com.assookkaa.ClassRecord.Utils.ApiException;
 import com.assookkaa.ClassRecord.Utils.Objects.TeachingLoadObject.TeachingLoadFuncs;
@@ -26,14 +27,20 @@ public class TeachingLoadService implements TeachingLoadImplementation {
     private final EnrollmentRepository enrollmentRepository;
     private final TeachingLoadFuncs teachingLoadFuncs;
     private final SubjectsRepository subjectsRepository;
+    private final OtpService otpService;
+    private final UserRepository userRepository;
+    private final TeacherRepository teacherRepository;
 
-    public TeachingLoadService(JwtUtil jwtUtil, TeachingLoadRepository teachingLoadRepository, TeachingLoadDetailsRespository teachingLoadDetailsRepository, EnrollmentRepository enrollmentRepository, TeachingLoadFuncs teachingLoadFuncs, SubjectsRepository subjectsRepository) {
+    public TeachingLoadService(JwtUtil jwtUtil, TeachingLoadRepository teachingLoadRepository, TeachingLoadDetailsRespository teachingLoadDetailsRepository, EnrollmentRepository enrollmentRepository, TeachingLoadFuncs teachingLoadFuncs, SubjectsRepository subjectsRepository, OtpService otpService, UserRepository userRepository, TeacherRepository teacherRepository) {
         this.jwtUtil = jwtUtil;
         this.teachingLoadRepository = teachingLoadRepository;
         this.teachingLoadDetailsRepository = teachingLoadDetailsRepository;
         this.enrollmentRepository = enrollmentRepository;
         this.teachingLoadFuncs = teachingLoadFuncs;
         this.subjectsRepository = subjectsRepository;
+        this.otpService = otpService;
+        this.userRepository = userRepository;
+        this.teacherRepository = teacherRepository;
     }
 
 
@@ -78,6 +85,7 @@ public class TeachingLoadService implements TeachingLoadImplementation {
 
         return enrollments.stream()
                 .map(e -> new TeachingLoadDetailsListOfStudentsEnrolled(
+                        e.getId(),
                         e.getStudent().getStudentId(),
                         e.getStudent().getStudent().getLname() + ", "
                                 + e.getStudent().getStudent().getFname() + " "
@@ -133,6 +141,23 @@ public class TeachingLoadService implements TeachingLoadImplementation {
                     );
                 })
                 .collect(Collectors.toList());
+    }
+
+    public Boolean sendStatusRequest(String token, Integer tld) {
+
+        String username = jwtUtil.getUsernameFromToken(token);
+        User user = userRepository.findByUsername(username);
+        Teachers teacherId = teacherRepository.findTeacherByUsername(username);
+
+        TeachingLoad tl = teachingLoadRepository.findById(tld).orElseThrow(() -> new ApiException("Not Found", 404, "NOT_FOUND"));
+        otpService.sendStatusChangeRequest(
+                user.getEmail(),
+                tl.getId(),
+                tl.getAcademic_year(),
+                tl.getSem().getSem_name(),
+                user.getFname() + " " +user.getLname()
+        );
+        return true;
     }
 
 }

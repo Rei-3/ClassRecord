@@ -1,5 +1,6 @@
 package com.assookkaa.ClassRecord.Service.Grading;
 
+import com.assookkaa.ClassRecord.Dto.Request.Grading.BaseGradeRequest;
 import com.assookkaa.ClassRecord.Dto.Request.Grading.GradingDetailRequest;
 import com.assookkaa.ClassRecord.Dto.Request.Grading.GradingRequest;
 import com.assookkaa.ClassRecord.Dto.Request.Grading.GradingUpdateRequest;
@@ -26,12 +27,16 @@ public class GradingService implements GradingInterface {
     private final EnrollmentRepository enrollmentRepository;
     private final GradingDetailRepository gradingDetailRepository;
 
-    public GradingService(GradingFunc gradingFunc, GradingRepository gradingRepository, EnrollmentRepository enrollmentRepository, GradingDetailRepository gradingDetailRepository) {
+    private final GradeBaseRepository gradeBaseRepository;
+
+    public GradingService(GradingFunc gradingFunc, GradingRepository gradingRepository, EnrollmentRepository enrollmentRepository, GradingDetailRepository gradingDetailRepository, GradeBaseRepository gradeBaseRepository) {
         this.gradingFunc = gradingFunc;
         this.gradingRepository = gradingRepository;
         this.enrollmentRepository = enrollmentRepository;
         this.gradingDetailRepository = gradingDetailRepository;
+        this.gradeBaseRepository = gradeBaseRepository;
     }
+
 
     @Override
     @Transactional
@@ -44,22 +49,6 @@ public class GradingService implements GradingInterface {
 
         grading = gradingRepository.save(grading);
 
-//        gradingFunc.batchGradingResponse(grading);
-
-//        List<Enrollments> enrollees = enrollmentRepository.findByTeachingLoadDetailId(teachingLoadDetails.getId());
-//        List<GradingDetail> gradingDetails = new ArrayList<>();
-//
-//        for (Enrollments enrollment : enrollees) {
-//            GradingDetail gradingDetail = gradingFunc.inputStudentInTheScoreSheetRecord(
-//                    new GradingDetailRequest(),grading, enrollment);
-//            gradingDetails.add(gradingDetail);
-//        }
-//
-//        gradingDetailRepository.saveAll(gradingDetails);
-
-//        List<GradingDetailsResponse> detailsResponses = gradingDetails.stream()
-//                .map(gradingFunc::gradingDetailResponse)
-//                .toList();
 
         return gradingFunc.batchGradingResponse(grading);
     }
@@ -92,6 +81,7 @@ public class GradingService implements GradingInterface {
             gradingDetail.setEnrollments(enrolled);
             gradingDetail.setGrading(grading);
             gradingDetail.setScore(dto.getScore());
+            gradingDetail.setRecordedOn(new Date());
             gradingDetails.add(gradingDetail);
         }
         gradingDetailRepository.saveAll(gradingDetails);
@@ -112,18 +102,80 @@ public class GradingService implements GradingInterface {
                 .map(gradingFunc::gradingDetailResponse)
                 .collect(Collectors.toList());
     }
-////////////////////////////
+
+
+    public BaseGradeResponse addBaseGrade ( BaseGradeRequest req){
+
+        TeachingLoadDetails teachingLoadDetails = gradingFunc.findTeachingLoadDetailId(
+                req.getTeachingLoadDetailId());
+
+        GradeBase baseGrade = GradeBase.builder()
+                .baseGrade(req.getBaseGrade())
+                .baseGradePercent(req.getPercentage())
+                .teachingLoadDetails(teachingLoadDetails)
+                .build();
+        gradeBaseRepository.save(baseGrade);
+
+
+        return BaseGradeResponse.builder()
+                .id(baseGrade.getId())
+                .baseGrade(baseGrade.getBaseGrade())
+                .percentage(baseGrade.getBaseGradePercent())
+                .build();
+    }
+
+    public BaseGradeResponse editBaseGrade (Integer BaseGradeId, BaseGradeRequest req){
+
+        GradeBase baseGrade = gradeBaseRepository.findById(BaseGradeId).orElseThrow(()->new IllegalArgumentException("Base Grade Not Found"));
+
+        TeachingLoadDetails tld = gradingFunc.findTeachingLoadDetailId(req.getTeachingLoadDetailId());
+
+        baseGrade.setBaseGrade(req.getBaseGrade());
+        baseGrade.setBaseGradePercent(req.getPercentage());
+        baseGrade.setTeachingLoadDetails(tld);
+
+        gradeBaseRepository.save(baseGrade);
+
+        return BaseGradeResponse.builder()
+                .id(baseGrade.getId())
+                .baseGrade(baseGrade.getBaseGrade())
+                .percentage(baseGrade.getBaseGradePercent())
+                .build();
+    }
+
+//////////////////////////
+    public BaseGradeResponse getBaseGrade(Integer req){
+
+        TeachingLoadDetails teachingLoadDetails = gradingFunc.findTeachingLoadDetailId(req);
+
+        GradeBase baseGrade = gradeBaseRepository.findByTeachingLoadDetailsId(teachingLoadDetails.getId()
+
+
+
+        );
+        if(baseGrade == null){
+            throw new IllegalArgumentException("Not Found BaseGrade");
+        }
+
+        return BaseGradeResponse.builder()
+                .id(baseGrade.getId())
+                .baseGrade(baseGrade.getBaseGrade())
+                .percentage(baseGrade.getBaseGradePercent())
+                .build();
+    }
+
     @Override
-    public List<GradeComputation> calculateEachTermGrade(Integer teachingLoad, List<Enrollments> enrollments, Term termId) {
+    public List<GradeComputation> calculateEachTermGrade(Integer teachingLoad, List<Enrollments> enrollments, Integer termId) {
 
 //        List<GradingDetail> gradingDetails = gradingFunc.getFilteredListOfStudents(enrollments, termId);
 
         Map<Integer, Double> categoryWeights = gradingFunc.getCategoryWeights(teachingLoad);
+        Term term = gradingFunc.findTermById(termId);
 
-        List <Grading> gradings = gradingRepository.findByTeachingLoadDetailsIdAndTermId(teachingLoad, termId.getId());
+        List <Grading> gradings = gradingRepository.findByTeachingLoadDetailsIdAndTermId(teachingLoad, term.getId());
 
         return enrollments.stream()
-                .map(e -> gradingFunc.computeTermGrades(e, gradings, termId, categoryWeights))
+                .map(e -> gradingFunc.computeTermGrades(e, gradings, term, categoryWeights))
                 .collect(Collectors.toList());
     }
 
@@ -135,8 +187,8 @@ public class GradingService implements GradingInterface {
         Term term2 = gradingFunc.findTermById(2);
 
         // Calculate the term grades synchronously
-        List<GradeComputation> term1Grades = calculateEachTermGrade(teachingLoadDetailId, enrollments, term1);
-        List<GradeComputation> term2Grades = calculateEachTermGrade(teachingLoadDetailId, enrollments, term2);
+        List<GradeComputation> term1Grades = this.calculateEachTermGrade(teachingLoadDetailId, enrollments, 1);
+        List<GradeComputation> term2Grades = this.calculateEachTermGrade(teachingLoadDetailId, enrollments, 2);
 
         // Compute semester grade by combining term grades
         return term1Grades.stream()
@@ -154,6 +206,7 @@ public class GradingService implements GradingInterface {
 
                     String remarks = finalGradeForSemester.doubleValue() <= 74 ? "Failed" : "Passed";
 
+
                     return new SemesterGradeComputation(
                             term1Grade.getStudentId(),
                             term1Grade.getName(),
@@ -169,38 +222,48 @@ public class GradingService implements GradingInterface {
     }
 
     @Override
-    public GradesPerCategory getGradesPerCategory(Integer teachingLoadDetailId, Integer termId, Integer categoryId) {
+    public List<GradesPerCategory> getGradesPerCategory(Integer teachingLoadDetailId, Integer termId, Integer categoryId) {
 
-        List<GradingDetail> gradeList = gradingDetailRepository.findGradesPerCategory(teachingLoadDetailId, termId, categoryId);
+        TeachingLoadDetails teachingLoadDetails = gradingFunc.findTeachingLoadDetailId(teachingLoadDetailId);
+        Term term = gradingFunc.findTermById(termId);
+        GradeCategory category = gradingFunc.findGradeCategory(categoryId);
 
-        if (gradeList.isEmpty()) {
-            return null;  // Or handle this case as needed
-        }
-        List<GradesPerCategory.Items> items = new ArrayList<>();
-
-        for (GradingDetail gradingDetail : gradeList) {
-            GradesPerCategory.Items item = new GradesPerCategory.Items();
-            item.setDesc(gradingDetail.getGrading().getDescription()); // Assume GradingDetail has a 'description' field
-            item.setTotalItem(gradingDetail.getGrading().getNumberOfItems()); // Assume GradingDetail has 'totalItems'
-            item.setDateConducted(gradingDetail.getGrading().getDateConducted()); // Assume GradingDetail has 'dateConducted'
-
-            // Convert the scores
-            List<GradesPerCategory.Score> scores = new ArrayList<>();
-            for (GradingDetail scoreDetail : gradingDetail.getGrading().getGradingDetails()) {  // Assume GradingDetail has getScores() method
-                GradesPerCategory.Score score = new GradesPerCategory.Score();
-                score.setGradingDetailId(scoreDetail.getId()); // Assume ScoreDetail has an 'id'
-                score.setEnrollmentId(scoreDetail.getEnrollments().getId()); // Assume ScoreDetail has 'enrollmentId'
-                score.setScore(BigDecimal.valueOf(scoreDetail.getScore())); // Assume ScoreDetail has 'score'
-                score.setRecordedOn(scoreDetail.getRecordedOn()); // Assume ScoreDetail has 'recordedOn'
-                scores.add(score);
-            }
-            item.setScore(scores);
-            items.add(item);
-        }
-
-        // Return the populated GradesPerCategory object
-        return new GradesPerCategory(teachingLoadDetailId, termId, categoryId, items);
+        return gradingDetailRepository.findGradesPerCategory(
+                teachingLoadDetails.getId(),
+                term.getId(),
+                category.getId()
+        );
     }
+
+
+    @Override
+    public List<GradingResponse> getGrading(Integer teachingLoadDetailId, Integer termId, Integer categoryId) {
+
+        List <Grading> getGrading = gradingRepository.findByTeachingLoadDetailsIdAndTermIdAndCategoryId(teachingLoadDetailId, termId, categoryId);
+
+        TeachingLoadDetails teachingLoadDetails = gradingFunc.findTeachingLoadDetailId(teachingLoadDetailId);
+        Term term = gradingFunc.findTermById(termId);
+        GradeCategory cat = gradingFunc.findGradeCategory(categoryId);
+
+        List <GradingResponse> gradingResponses = new ArrayList<>();
+
+        for (Grading grading : getGrading) {
+            GradingResponse items = new GradingResponse();
+            items.setId(grading.getId());
+            items.setTeachingLoadDetailId(teachingLoadDetails.getId());
+            items.setTermId(term.getId());
+            items.setCatId(cat.getId());
+            items.setDesc(grading.getDescription());
+            items.setNumberOfItems(grading.getNumberOfItems());
+            items.setDate(grading.getDateConducted());
+
+            gradingResponses.add(items);
+        }
+
+        return gradingResponses;
+    }
+
+
 
 
 }

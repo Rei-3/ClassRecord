@@ -3,14 +3,14 @@ package com.assookkaa.ClassRecord.Dto.Response.Attendance;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Builder
 @Data
 @AllArgsConstructor
 public class AttendanceResponse {
     private Integer id;
-    private Integer enrollmentId;
-    private Boolean isPresent;
-    private LocalDateTime date;
+    private String description;
+    private Integer numberOfItems;
+    private Date date;
 }

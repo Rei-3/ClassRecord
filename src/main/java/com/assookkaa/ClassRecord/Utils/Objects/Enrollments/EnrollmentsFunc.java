@@ -8,6 +8,7 @@ import com.assookkaa.ClassRecord.Entity.TeachingLoadDetails;
 import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Utils.Interface.Enrollments.EnrollmentsFuncInterface;
 import com.assookkaa.ClassRecord.Utils.Objects.Super;
+import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -16,8 +17,8 @@ import java.util.Date;
 public class EnrollmentsFunc extends Super implements EnrollmentsFuncInterface {
     private final EnrollmentRepository enrollmentRepository;
 
-    public EnrollmentsFunc(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository, EnrollmentRepository enrollmentRepository1) {
-        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository);
+    public EnrollmentsFunc(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository, TokenDecryption tokenDecryption, EnrollmentRepository enrollmentRepository1) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository, tokenDecryption);
         this.enrollmentRepository = enrollmentRepository1;
     }
 

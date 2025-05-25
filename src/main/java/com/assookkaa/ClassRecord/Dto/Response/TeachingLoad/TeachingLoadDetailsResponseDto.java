@@ -10,4 +10,9 @@ public class TeachingLoadDetailsResponseDto {
     private String schedule;
     private String key;
     private String section;
+
+    public TeachingLoadDetailsResponseDto(Integer id, Integer teachingLoadId) {
+        this.id = id;
+        this.teachingLoadId = teachingLoadId;
+    }
 }

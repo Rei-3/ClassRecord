@@ -20,4 +20,7 @@ public class GradingRequest {
     private Integer teachingLoadDetailId;
     private Integer termId;
     private Date date;
+
 }
+
+

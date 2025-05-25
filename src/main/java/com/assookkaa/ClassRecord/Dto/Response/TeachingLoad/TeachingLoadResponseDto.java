@@ -13,3 +13,4 @@ public class TeachingLoadResponseDto {
    private Date addedOn;
    private String academicYear;
 }
+

@@ -1,15 +1,15 @@
 package com.assookkaa.ClassRecord.Dto.Request.Attendance;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class AttendanceBatchBuildRequest {
-    private String description;
-    private Integer numberOfItems;
-    private Integer categoryId;
+@AllArgsConstructor
+public class AttendanceBuildRequest {
     private Integer teachingLoadDetailId;
     private Integer termId;
-    private Date date;
+    private Integer categoryId;
+
 }

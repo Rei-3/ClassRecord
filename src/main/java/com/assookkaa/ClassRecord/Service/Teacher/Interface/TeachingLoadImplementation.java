@@ -17,4 +17,5 @@ public interface TeachingLoadImplementation {
   List<TeachingLoadDetailsListOfStudentsEnrolled> viewAllEnrolledStudents (Integer teachingLoadId);
   List<TeachingLoadResponseSubjectsDto> getTeachingLoadsForCurrentTeacher(String token);
 
+    Boolean sendStatusRequest(String token, Integer tld);
 }

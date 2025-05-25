@@ -5,18 +5,19 @@ import com.assookkaa.ClassRecord.Dto.Response.TeachingLoad.TeachingLoadDetailsLi
 import com.assookkaa.ClassRecord.Dto.Response.TeachingLoad.TeachingLoadDetailsResponseDto;
 import com.assookkaa.ClassRecord.Dto.Response.TeachingLoad.TeachingLoadResponseDto;
 import com.assookkaa.ClassRecord.Dto.Response.TeachingLoad.TeachingLoadResponseSubjectsDto;
-import com.assookkaa.ClassRecord.Entity.TeachingLoad;
+import com.assookkaa.ClassRecord.Dto.Response.User.TeacherUser;
 import com.assookkaa.ClassRecord.Service.Subject.SubjectService;
 import com.assookkaa.ClassRecord.Service.Teacher.Interface.TeachingLoadImplementation;
 import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("/api/class-record")
+@RequestMapping("/api/teacher/class-record")
 public class TeachingLoadController {
 
 
@@ -30,6 +31,7 @@ public class TeachingLoadController {
 
     TokenDecryption tokenDecryption = new TokenDecryption();
 
+    @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("/add-teaching-load")
     public ResponseEntity<TeachingLoadResponseDto> teachingLoad(@RequestHeader("Authorization") String token,
                                                 @RequestBody  TeachingLoadResponseDto teachingLoadResponseDto) {
@@ -40,6 +42,7 @@ public class TeachingLoadController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("/add-teaching-load-details")
     public ResponseEntity<TeachingLoadDetailsResponseDto> teachingLoadDetails(
             @RequestHeader ("Authorization") String token,
@@ -54,12 +57,14 @@ public class TeachingLoadController {
     }
 
     //Get
+    @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/view-enrolled/{teachingLoadDetailId}")
     public ResponseEntity<List<TeachingLoadDetailsListOfStudentsEnrolled>> viewEnrolled(
             @RequestHeader("Authorization") String token,
             @PathVariable Integer teachingLoadDetailId
     ) {
         try {
+            tokenDecryption.tokenDecryption(token);
             List<TeachingLoadDetailsListOfStudentsEnrolled> enrolledStudents = teachingLoadService.viewAllEnrolledStudents(teachingLoadDetailId);// Return the response with the list of enrolled students
             return ResponseEntity.ok(enrolledStudents);
         }catch (Exception e) {
@@ -68,6 +73,7 @@ public class TeachingLoadController {
         return null;
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/teaching-load")
     public ResponseEntity<List<TeachingLoadResponseSubjectsDto>> getCurrentTeacherLoads(
             @RequestHeader("Authorization") String token
@@ -90,6 +96,26 @@ public class TeachingLoadController {
                 subjectService.getGradingCompositionWithCategoryForTeachingLoadDetail(teachingLoadDetailId);
 
         return ResponseEntity.ok(resp);
+    }
+
+    @PreAuthorize("hasRole('TEACHER')")
+    @GetMapping("/teacher-info")
+    public ResponseEntity <TeacherUser> getTeacherInfo (
+            @RequestHeader ("Authorization") String token)
+    {
+        String extractedToken = tokenDecryption.tokenDecryption(token);
+        TeacherUser response = subjectService.getTeacherUser(extractedToken);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('TEACHER')")
+    @PostMapping("/send-request-change/{teachingLoadId}")
+    public Boolean sendRequestChange (
+            @RequestHeader ("Authorization") String token,
+            @PathVariable Integer teachingLoadId
+    ){
+        String extractedToken = tokenDecryption.tokenDecryption(token);
+        return teachingLoadService.sendStatusRequest(extractedToken, teachingLoadId);
     }
 
 }

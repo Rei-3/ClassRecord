@@ -4,8 +4,12 @@ import com.assookkaa.ClassRecord.Entity.*;
 import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Utils.ApiException;
 import com.assookkaa.ClassRecord.Utils.Interface.SuperInterface;
+import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 
 @Component
 @AllArgsConstructor
@@ -19,6 +23,7 @@ public class Super implements SuperInterface {
     private final TeachingLoadDetailsRespository teachingLoadDetailsRespository;
     private final TermRepository termRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final TokenDecryption tokenDecryption;
 
     @Override
     public Teachers findTeacherByUsername(String username) {
@@ -76,6 +81,22 @@ public class Super implements SuperInterface {
                 new RuntimeException("Term Not Found"));
     }
 
+    @Override
+    public void checkKeys(String API_KEY, String SECRET_KEY) {
+       if(API_KEY == null || SECRET_KEY == null){
+           throw new RuntimeException("API Key or Secret Key Not Found");
+       }
+
+       if(!MessageDigest.isEqual(
+               tokenDecryption.getApiKey().getBytes(StandardCharsets.UTF_8),
+               API_KEY.getBytes(StandardCharsets.UTF_8)
+       )|| !MessageDigest.isEqual(
+               tokenDecryption.getSecretKey().getBytes(StandardCharsets.UTF_8),
+               SECRET_KEY.getBytes(StandardCharsets.UTF_8)
+       )){
+           throw new IllegalArgumentException("Wrong Key Bozo");
+       }
+    }
 
 
 }

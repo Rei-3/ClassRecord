@@ -12,7 +12,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
 @Table(name = "term")
 public class Term {
@@ -28,8 +27,9 @@ public class Term {
     @OneToMany(mappedBy = "term", cascade = CascadeType.ALL, orphanRemoval = true)
     private List <Grading> grading;
 
-    public Term(Integer id) {
-        this.id = id;
-    }
 
+    public Term(int walls, String door) {
+        this.id = walls;
+        this.term_type = door;
+    }
 }

@@ -143,9 +143,16 @@ public class AuthService {
         User user = userRepository.findByUsername(loginRequest.getUsername());
         if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()))
         {
-            String token = jwtUtil.generateAccessToken(user.getUsername(), user.getOtp(), user.getId());
+            String role = user.getRole().getRoleName();
+            String token = jwtUtil.generateAccessToken(user.getUsername(), user.getOtp(), user.getId(), role);
             String refresh = jwtUtil.generateRefreshToken(user.getUsername());
-            return new LoginResponseDto(user.getUsername(), token, refresh);
+
+            return new LoginResponseDto(
+                    user.getUsername(),
+                    user.getFname(),
+                    user.getLname(),
+                    user.getRole().getRoleName()
+                    , token, refresh);
         }
         throw new ApiException("Invalid username or password", 403, "INVALID_USERNAME_OR_PASSWORD");
     }
@@ -163,10 +170,38 @@ public class AuthService {
         if(user == null) {
             throw new RuntimeException("User not found");
         }
-
-        String newAccessToken = jwtUtil.generateAccessToken(user.getUsername(),user.getOtp(),user.getId());
+        String role = user.getRole().getRoleName();
+        String newAccessToken = jwtUtil.generateAccessToken(user.getUsername(),user.getOtp(),user.getId(),role);
 
         return new RefreshTokenResponse(newAccessToken);
 
     }
+
+//    public void accountReset (int id){
+//        User user = userRepository.findById(id).orElseThrow(() -> new ApiException("User not found", 404, "USER_NOT_FOUND"));
+//
+//        Roles role = rolesRepository.findById(user.getRole().getId()).orElseThrow(() -> new ApiException("Role not found", 404, "ROLE_NOT_FOUND"));
+//
+//        if(role.getId() == 2){
+//
+//        }
+//
+//       if(role.equals(3)){
+//           studentRepository.findById(user.getStudents().get().getId());
+//           User users = new User(
+//                   user.setUsername(null);
+//                   users.setPassword(null);
+//                   user.setOtp(null);
+//
+//                   Students students= studentRepository.
+//           )
+//       }
+//    }
+//
+//    @Transactional
+//    public void resetPassword (String email){
+//        User user = userRepository.findByEmail(email);
+//        user.setOtp(null);
+//        otpService.sendOtpEmail(user.getEmail());
+//    }
 }

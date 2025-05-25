@@ -27,8 +27,13 @@ public class TeachingLoadDetails {
     @Column
     private String schedule;
 
-    @Column
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String hashKey;
+
+
+    @OneToOne(mappedBy = "teachingLoadDetails",cascade = CascadeType.ALL)
+    private GradeBase gradeBase;
 
     // Many TeachingLoadDetails belong to one TeachingLoad
     @ManyToOne

@@ -6,6 +6,7 @@ import com.assookkaa.ClassRecord.Entity.*;
 import com.assookkaa.ClassRecord.Repository.*;
 import com.assookkaa.ClassRecord.Utils.Interface.TeachingLoad.TeachingLoadInterface;
 import com.assookkaa.ClassRecord.Utils.Objects.Super;
+import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +17,8 @@ import java.util.Date;
 public class TeachingLoadFuncs extends Super implements TeachingLoadInterface {
 
 
-    public TeachingLoadFuncs(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository) {
-        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository);
+    public TeachingLoadFuncs(TeacherRepository teacherRepository, StudentRepository studentRepository, SubjectsRepository subjectsRepository, SemRepository semRepository, GradeCategoryRepository gradeCategoryRepository, TeachingLoadDetailsRespository teachingLoadDetailsRespository, TermRepository termRepository, EnrollmentRepository enrollmentRepository, TokenDecryption tokenDecryption) {
+        super(teacherRepository, studentRepository, subjectsRepository, semRepository, gradeCategoryRepository, teachingLoadDetailsRespository, termRepository, enrollmentRepository, tokenDecryption);
     }
 
     @Override

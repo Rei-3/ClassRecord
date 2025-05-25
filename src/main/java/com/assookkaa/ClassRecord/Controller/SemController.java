@@ -1,9 +1,11 @@
 package com.assookkaa.ClassRecord.Controller;
 
+import com.assookkaa.ClassRecord.Dto.Response.Courses.CoursesResponse;
 import com.assookkaa.ClassRecord.Dto.Response.GradingComposition.CategoryDto;
 import com.assookkaa.ClassRecord.Dto.Response.Sem.SemResponsedDto;
 import com.assookkaa.ClassRecord.Dto.Response.Subject.SubjectDto;
 import com.assookkaa.ClassRecord.Dto.Response.Term.TermResponseDto;
+import com.assookkaa.ClassRecord.Service.Courses.CoursesService;
 import com.assookkaa.ClassRecord.Service.Sem.SemService;
 import com.assookkaa.ClassRecord.Service.Subject.SubjectService;
 import com.assookkaa.ClassRecord.Service.Term.TermService;
@@ -22,6 +24,7 @@ public class SemController {
     private final SemService semService;
     private final SubjectService subjectService;
     private final TermService termService;
+    private final CoursesService coursesService;
 
     @GetMapping("/getSem")
     public List<SemResponsedDto> getAllSem() {
@@ -40,4 +43,15 @@ public class SemController {
     public List<CategoryDto> getCategories(){
         return subjectService.getAllCategories();
     }
+
+    @GetMapping("/courses")
+    public List<CoursesResponse> getCourses(){
+        return coursesService.getAllCourses();
+    }
+
+    @GetMapping("/courses-with-dep")
+    public List<CoursesResponse> getCoursesWithDep(){
+        return coursesService.getAllCoursesWithCollege();
+    }
+
 }

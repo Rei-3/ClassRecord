@@ -21,7 +21,7 @@ public class JwtUtil {
     private final UserRepository userRepository;
     private SecretKey secretKey;
 
-    @Value("${Secret}")
+    @Value("${api.jwtSecret}")
     String secret;
 
     public JwtUtil(UserRepository userRepository) {
@@ -60,11 +60,12 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateAccessToken(String username, String otp, Integer userId) {
+    public String generateAccessToken(String username, String otp, Integer userId, String role) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("otp", otp)
                 .claim("userId", userId)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(secretKey)
@@ -101,6 +102,10 @@ public class JwtUtil {
     public Integer getUserIdFromToken(String token) {
         Claims claims = getAllClaimsFromToken(token);
         return claims.get("userId", Integer.class);
+    }
+    public String getRoleFromToken (String token){
+        Claims claims = getAllClaimsFromToken(token);
+        return claims.get("role", String.class);
     }
 
     public boolean isTokenExpired(String token) {
