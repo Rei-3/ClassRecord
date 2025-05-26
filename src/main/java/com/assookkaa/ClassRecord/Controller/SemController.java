@@ -4,6 +4,7 @@ import com.assookkaa.ClassRecord.Dto.Response.Courses.CoursesResponse;
 import com.assookkaa.ClassRecord.Dto.Response.GradingComposition.CategoryDto;
 import com.assookkaa.ClassRecord.Dto.Response.Sem.SemResponsedDto;
 import com.assookkaa.ClassRecord.Dto.Response.Subject.SubjectDto;
+import com.assookkaa.ClassRecord.Dto.Response.Subject.SubjectsWithCourse;
 import com.assookkaa.ClassRecord.Dto.Response.Term.TermResponseDto;
 import com.assookkaa.ClassRecord.Service.Courses.CoursesService;
 import com.assookkaa.ClassRecord.Service.Sem.SemService;
@@ -47,6 +48,11 @@ public class SemController {
     @GetMapping("/courses")
     public List<CoursesResponse> getCourses(){
         return coursesService.getAllCourses();
+    }
+
+    @GetMapping("/subs-with-courses")
+    public List<SubjectsWithCourse> getSubjectsWithCourses(){
+        return subjectService.getAllSubjectsWithCourse();
     }
 
     @GetMapping("/courses-with-dep")

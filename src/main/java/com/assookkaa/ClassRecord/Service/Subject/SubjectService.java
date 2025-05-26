@@ -5,6 +5,7 @@ import com.assookkaa.ClassRecord.Dto.Response.GradingComposition.CategoryDto;
 import com.assookkaa.ClassRecord.Dto.Response.GradingComposition.GradingCompositionWithCategoryForTeachingLoadDetailResponse;
 import com.assookkaa.ClassRecord.Dto.Response.Subject.SubjectDto;
 
+import com.assookkaa.ClassRecord.Dto.Response.Subject.SubjectsWithCourse;
 import com.assookkaa.ClassRecord.Dto.Response.User.StudentUser;
 import com.assookkaa.ClassRecord.Dto.Response.User.TeacherUser;
 import com.assookkaa.ClassRecord.Entity.*;
@@ -41,6 +42,20 @@ public class SubjectService implements SubjectInterface {
                         subs.getUnits()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public List <SubjectsWithCourse> getAllSubjectsWithCourse() {
+        List<Subjects> subjects = subjectsRepository.findAll();
+
+        return subjects.stream()
+                .map(subs -> new SubjectsWithCourse(
+                        subs.getId(),
+                        subs.getSubjectDesc(),
+                        subs.getSubjectName(),
+                        subs.getUnits(),
+                        subs.getCourse().getId(),
+                        subs.getCourse().getCourse_name()
+                )).collect(Collectors.toList());
     }
 
     public List<CategoryDto> getAllCategories() {

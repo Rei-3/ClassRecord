@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.assookkaa</groupId>
 	<artifactId>ClassRecord</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>ClassRecord</name>
 	<description>Class Record REST API </description>
 	<url/>
@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
+			
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -146,12 +146,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
+
 				</configuration>
 			</plugin>
 		</plugins>
