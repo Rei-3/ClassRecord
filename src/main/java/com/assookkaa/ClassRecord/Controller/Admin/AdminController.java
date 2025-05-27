@@ -12,7 +12,9 @@ import com.assookkaa.ClassRecord.Service.Admin.AdminService;
 import com.assookkaa.ClassRecord.Service.Admin.Interface.AdminInterface;
 import com.assookkaa.ClassRecord.Service.Sem.SemService;
 import com.assookkaa.ClassRecord.Service.Teacher.TeachingLoadService;
+import com.assookkaa.ClassRecord.Utils.Objects.Super;
 import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,91 +29,117 @@ public class AdminController {
     private final AdminInterface adminService;
     private final TeachingLoadService teachingLoadService;
     private final SemService semService;
+    private final Super usurper;
 
-    public AdminController(TokenDecryption tokenDecryption, AdminService adminService, TeachingLoadService teachingLoadService, SemService semService) {
+    public AdminController(TokenDecryption tokenDecryption, AdminService adminService, TeachingLoadService teachingLoadService, SemService semService, @Qualifier("super") Super usurper) {
         this.tokenDecryption = tokenDecryption;
         this.adminService = adminService;
         this.teachingLoadService = teachingLoadService;
         this.semService = semService;
+        this.usurper = usurper;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all-users")
     public ResponseEntity<List<Users>> getAllUsers(
-            @RequestHeader("Authorization") String token
+            @RequestHeader("Authorization") String token,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey
     ) {
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List <Users> response = adminService.getAllUsers();
         return ResponseEntity.ok(response);
     }
-
+//---------------------------------------------
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all-students")
     public ResponseEntity<List<StudentAllDetails>> getAllStudents(
-            @RequestHeader("Authorization") String token
+            @RequestHeader("Authorization") String token,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey
     ) {
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List <StudentAllDetails> response = adminService.getAllStudentDetails();
         return ResponseEntity.ok(response);
     }
-
+//--------------------------------------
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all-teachers")
     public ResponseEntity<List<TeacherAllDetails>> getAllTeachers(
-            @RequestHeader("Authorization") String token
+            @RequestHeader("Authorization") String token,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey
     ) {
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List <TeacherAllDetails> response = adminService.getAllTeacherDetails();
         return ResponseEntity.ok(response);
     }
-
+//----------------------------------------------
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all-enrolled/{tld}")
     public ResponseEntity<List<TeachingLoadDetailsListOfStudentsEnrolled>> getAllEnrolledStudents(
             @RequestHeader("Authorization") String token,
-            @PathVariable Integer tld
+            @PathVariable Integer tld,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey
     ){
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List<TeachingLoadDetailsListOfStudentsEnrolled> resp = teachingLoadService.viewAllEnrolledStudents(
                 tld
         );
         return ResponseEntity.ok(resp);
     }
-
+//--------------------------------------------------
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all-teaching-loads")
     public ResponseEntity<List<AllTeachingLoadResponse>> getAllTeachingLoad (
-            @RequestHeader ("Authorization") String token
+            @RequestHeader ("Authorization") String token,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey
     ){
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List <AllTeachingLoadResponse> resp = semService.getAllTeachingLoad();
         return ResponseEntity.ok(resp);
     }
-
+//--------------------------------------------------
     @GetMapping("/all-tld")
     public ResponseEntity<List<TeachingLoadDetailsResponseDto>> getTLD (
-            @RequestHeader ("Authorization") String token
+            @RequestHeader ("Authorization") String token,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey
     ){
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List<TeachingLoadDetailsResponseDto> resp = semService.getAllTeachingLoadDetails();
         return ResponseEntity.ok(resp);
     }
 
-
+//--------------------------------------------------------
     @GetMapping("/all-tld/{teachingLoadId}")
     public ResponseEntity<List<TLD>> getTLDbyTL (
             @RequestHeader ("Authorization") String token,
-            @PathVariable Integer teachingLoadId
+            @PathVariable Integer teachingLoadId,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey
     ){
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List<TLD> resp = semService.getTLDbyTLiD(teachingLoadId);
         return ResponseEntity.ok(resp);
     }
-
+//---------------------------------------------------
     @PutMapping("/edit-teching-load")
     public ResponseEntity<TeachingLoadStatusEdit> editStatus(
             @RequestHeader ("Authorization") String token,
-            @RequestBody TeachingLoadStatusEdit dto) {
+            @RequestBody TeachingLoadStatusEdit dto,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey) {
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         TeachingLoadStatusEdit updated = adminService.editStatus(dto);
         return ResponseEntity.ok(updated);

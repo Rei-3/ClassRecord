@@ -6,7 +6,6 @@ import com.assookkaa.ClassRecord.Dto.Request.Grading.GradingUpdateRequest;
 import com.assookkaa.ClassRecord.Dto.Response.Grading.*;
 import com.assookkaa.ClassRecord.Dto.Response.Grading.Category.GradesPerCategory;
 import com.assookkaa.ClassRecord.Entity.Enrollments;
-import com.assookkaa.ClassRecord.Entity.GradingDetail;
 import com.assookkaa.ClassRecord.Repository.EnrollmentRepository;
 import com.assookkaa.ClassRecord.Service.Grading.GradingService;
 import com.assookkaa.ClassRecord.Service.Grading.Interface.GradingInterface;
@@ -14,7 +13,6 @@ import com.assookkaa.ClassRecord.Utils.Objects.Super;
 import com.assookkaa.ClassRecord.Utils.Token.TokenDecryption;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,11 +30,6 @@ public class GradingController {
     private final EnrollmentRepository enrollmentRepository;
     private final Super usurper;
 
-    @Value("${api.key}")
-    private String apiKey;
-    @Value("${api.secret}")
-    private String secretKey;
-
     public GradingController(GradingService gradingService, EnrollmentRepository enrollmentRepository, @Qualifier("super") Super usurper) {
         this.gradingService = gradingService;
         this.enrollmentRepository = enrollmentRepository;
@@ -50,19 +43,25 @@ public class GradingController {
     @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("/add-activity")
     public ResponseEntity<GradingResponse> addGrading (@RequestHeader("Authorization") String token,
-                                                       @RequestBody GradingRequest gradingRequest) {
+                                                       @RequestBody GradingRequest gradingRequest,
+                                                       @RequestHeader("API_KEY") String apiKey,
+                                                       @RequestHeader("SECRET_KEY") String clientSecretKey) {
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         GradingResponse response = gradingService.addActivity(gradingRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
+//--------------------------------------------
     @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("details/record-score")
     public ResponseEntity<BatchGradingDetailsResponse> recordScore (
             @RequestHeader("Authorization") String token,
-            @RequestBody List<GradingDetailRequest> gradingDetailRequest)
+            @RequestBody List<GradingDetailRequest> gradingDetailRequest,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey)
     {
         try{
+            usurper.checkKeys(apiKey, clientSecretKey);
             tokenDecryption.tokenDecryption(token);
             BatchGradingDetailsResponse response = gradingService.recordScore(gradingDetailRequest);
             return ResponseEntity.ok(response);
@@ -70,34 +69,43 @@ public class GradingController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-
+//------------------------------
 //PUT
     @PreAuthorize("hasRole('TEACHER')")
     @PutMapping("/details/edit-score")
     public ResponseEntity<UpdatedScoreResponse> editRecordedScore (@RequestHeader("Authorization") String token,
-                                                                    @RequestBody GradingUpdateRequest gradingDetailRequests){
+                                                                    @RequestBody GradingUpdateRequest gradingDetailRequests,
+                                                                   @RequestHeader("API_KEY") String apiKey,
+                                                                   @RequestHeader("SECRET_KEY") String clientSecretKey){
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         return ResponseEntity.ok(gradingService.editRecordedScore(gradingDetailRequests));
     }
-
+//--------------------------------------
 //GET
     @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/details/{gradingId}")
     public ResponseEntity<List<GradingDetailsResponse>> details (@RequestHeader("Authorization") String token,
-                                                           @PathVariable("gradingId") Integer gradingId) {
+                                                           @PathVariable("gradingId") Integer gradingId,
+                                                                 @RequestHeader("API_KEY") String apiKey,
+                                                                 @RequestHeader("SECRET_KEY") String clientSecretKey) {
 
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List<GradingDetailsResponse> response = gradingService.gradingDetailsResponseList(gradingId);
         return ResponseEntity.ok(response);
     }
-
+//-------------------------------------------------
     @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/compute/{teachingLoadDetailId}/{termId}")
     public ResponseEntity<List<GradeComputation>> getFinalTermGrade(
             @RequestHeader("Authorization") String token,
             @PathVariable Integer termId,
-            @PathVariable Integer teachingLoadDetailId) {
+            @PathVariable Integer teachingLoadDetailId,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey) {
 
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List<Enrollments> enrollments = enrollmentRepository.findByTeachingLoadDetailId(teachingLoadDetailId);
 
@@ -105,13 +113,16 @@ public class GradingController {
 
         return ResponseEntity.ok(gradeComputations);
     }
-
+//-------------------------------------------------------
     @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/compute/final/{teachingLoadDetailId}")
     public ResponseEntity<List<SemesterGradeComputation>> getComputedGrades(
             @PathVariable Integer teachingLoadDetailId,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader("Authorization") String token,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey) {
 
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List<Enrollments> enrollments = enrollmentRepository.findByTeachingLoadDetailId(teachingLoadDetailId);
 
@@ -119,32 +130,34 @@ public class GradingController {
 
         return ResponseEntity.ok(semesterGrades);
     }
-
+//------------------------------------------
     @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/details/grades-per-category/{teachingLoadDetailId}/{termId}/{categoryId}")
     public ResponseEntity <List<GradesPerCategory>> getGradesPerCategory(
             @PathVariable Integer teachingLoadDetailId,
-//            @RequestHeader("API_KEY") String clientApiKey,
-//            @RequestHeader("SECRET_KEY") String clientSecretKey,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey,
             @PathVariable Integer termId,
             @PathVariable Integer categoryId,
             @RequestHeader ("Authorization") String token
     ){
-//        usurper.checkKeys(clientApiKey, clientSecretKey);
-
+              usurper.checkKeys(apiKey, clientSecretKey);
             tokenDecryption.tokenDecryption(token);
             List<GradesPerCategory> response = gradingService.getGradesPerCategory(teachingLoadDetailId, termId, categoryId);
             return ResponseEntity.ok(response);
     }
-
+//-------------------------------------------
     @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/details/list-of-activities/{teachingLoadDetailId}/{termId}/{categoryId}")
     public ResponseEntity <List<GradingResponse>> getActivitiesList (
             @PathVariable Integer teachingLoadDetailId,
             @PathVariable Integer termId,
             @PathVariable Integer categoryId,
-            @RequestHeader ("Authorization") String token
+            @RequestHeader ("Authorization") String token,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey
     ){
+        usurper.checkKeys(apiKey, clientSecretKey);
         tokenDecryption.tokenDecryption(token);
         List<GradingResponse> response = gradingService.getGrading(teachingLoadDetailId, termId, categoryId);
         return ResponseEntity.ok(response);

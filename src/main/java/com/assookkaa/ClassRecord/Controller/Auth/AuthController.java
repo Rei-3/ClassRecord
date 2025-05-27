@@ -35,25 +35,28 @@ public class AuthController {
         this.usurper = usurper;
     }
 
-
+//------------------------------------------------
     @PostMapping("/login")
     @Operation(summary = "Login to the App", description = "Enter credentials to login")
     public ResponseEntity<LoginResponseDto> login (
-//            @RequestHeader("API_KEY") String apiKey,
-//            @RequestHeader("SECRET_KEY") String clientSecretKey,
-            @RequestBody LoginDto loginDto) {
-
-//      usurper.checkKeys(apiKey, clientSecretKey);
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey,
+            @RequestBody LoginDto loginDto)
+    {
+      usurper.checkKeys(apiKey, clientSecretKey);
         return ResponseEntity.ok(authService.login(loginDto));
     }
 
-
+//---------------------------------------------
     @PostMapping("/register-teacher")
     @Operation(summary = "Register Teacher", description = "Enter credentials for registration")
     public ResponseEntity<?> registerUser(
             @Validated
-            @RequestBody RegisterTeacherDto registerDto) {
+            @RequestBody RegisterTeacherDto registerDto,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey) {
         try {
+            usurper.checkKeys(apiKey, clientSecretKey);
             RegisterTeacherResponseDto registeredUser = authService.registerTeacher(registerDto);
             return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
         } catch (ApiException e) {
@@ -62,13 +65,16 @@ public class AuthController {
         }
     }
 
-
+//----------------------------------------------
     @PostMapping("/register-student")
     @Operation(summary = "Register Student", description = "Enter credentials for student registration")
     public ResponseEntity<?> registerStudent(
             @Validated
-            @RequestBody RegisterStudentDto registerDto) {
+            @RequestBody RegisterStudentDto registerDto,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey) {
         try {
+            usurper.checkKeys(apiKey, clientSecretKey);
             RegisterStudentDtoResponse registerStudent = authService.registerStudent(registerDto);
             return new ResponseEntity<>(registerStudent, HttpStatus.CREATED);
         } catch (ApiException e) {
@@ -76,10 +82,13 @@ public class AuthController {
             return new ResponseEntity<>(errorDtoResponse, HttpStatus.valueOf(e.getStatusCode()));
         }
     }
-
+//--------------------------------------------------
     @PostMapping("/verify-otp")
     @Operation(summary = "Verify OTP if its real", description = "Verify OTP")
-    public ResponseEntity<?> verifyOtp(@RequestParam String otp) {
+    public ResponseEntity<?> verifyOtp(@RequestParam String otp,
+                                       @RequestHeader("API_KEY") String apiKey,
+                                       @RequestHeader("SECRET_KEY") String clientSecretKey) {
+        usurper.checkKeys(apiKey, clientSecretKey);
         boolean optValid = authService.otpValidation(otp);
         if (optValid) {
             return ResponseEntity.ok("OTP verified");
@@ -87,16 +96,19 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Invalid OTP");
         }
     }
-
+//------------------------------------------------
     @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("/teacher-username-password")
     @Operation(summary = "Teacher Username and Password", description = "Enter Teacher Username and Password")
     public ResponseEntity<?> teacherUsernamePassword(
             @Validated
             @RequestParam String otp,
-            @RequestBody UsernameAndPasswordDto usernameAndPasswordDto
+            @RequestBody UsernameAndPasswordDto usernameAndPasswordDto,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey
     ) {
         try {
+            usurper.checkKeys(apiKey, clientSecretKey);
             boolean otpValidation = authService.otpValidation(otp);
             if (!otpValidation) {
                 ErrorDtoResponse errorDtoResponse = new ErrorDtoResponse(400, "OTP Invalid", "OTP_INVALID");
@@ -110,15 +122,18 @@ public class AuthController {
             return new ResponseEntity<>(errorDtoResponse, HttpStatus.valueOf(e.getStatusCode()));
         }
     }
-
+//--------------------------------------------------
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/student-username-password")
     @Operation(summary = "Student ID and Password", description = "Enter Student ID and Password")
     public ResponseEntity<?> studentUsernamePassword(
             @Validated
             @RequestParam String otp,
-            @RequestBody UsernameAndPasswordDto usernameAndPasswordDto) {
+            @RequestBody UsernameAndPasswordDto usernameAndPasswordDto,
+            @RequestHeader("API_KEY") String apiKey,
+            @RequestHeader("SECRET_KEY") String clientSecretKey) {
         try {
+            usurper.checkKeys(apiKey, clientSecretKey);
             boolean otpValidation = authService.otpValidation(otp);
             if (!otpValidation) {
                 ErrorDtoResponse errorDtoResponse = new ErrorDtoResponse(400, "OTP Invalid", "OTP_INVALID");
@@ -131,10 +146,13 @@ public class AuthController {
             return new ResponseEntity<>(errorDtoResponse, HttpStatus.valueOf(e.getStatusCode()));
         }
     }
-
+//-------------------------------------------------
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest,
+                                          @RequestHeader("API_KEY") String apiKey,
+                                          @RequestHeader("SECRET_KEY") String clientSecretKey) {
         try {
+            usurper.checkKeys(apiKey, clientSecretKey);
             String token = refreshTokenRequest.getRefreshToken();
 
             RefreshTokenResponse response = authService.RefreshToken(token);
