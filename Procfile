@@ -1,1 +1,1 @@
-web: java -jar target/ClassRecord-0.0.2-SNAPSHOT.jar
+web: java -jar target/*.jar
