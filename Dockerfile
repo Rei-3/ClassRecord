@@ -15,4 +15,4 @@ ARG DEPENDENCY=/workspace/target/dependency
 COPY --from=builder ${DEPENDENCY}/BOOT-INF/lib ./lib/
 COPY --from=builder ${DEPENDENCY}/META-INF ./META-INF/
 COPY --from=builder ${DEPENDENCY}/BOOT-INF/classes ./
-ENTRYPOINT ["java", "-cp", ".:lib/*", "com.assookkaa.ClassRecordApplication"]
+ENTRYPOINT ["java", "-cp", ".:lib/*", "com.assookkaa.ClassRecord"]
