@@ -10,9 +10,9 @@ RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 # Runtime stage
 FROM eclipse-temurin:17-jre-jammy
-VOLUME /tmp
+WORKDIR /app
 ARG DEPENDENCY=/workspace/target/dependency
-COPY --from=builder ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=builder ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=builder ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java", "-cp", "app:app/lib/*", "com.assookkaa.ClassRecord"]
+COPY --from=builder ${DEPENDENCY}/BOOT-INF/lib ./lib/
+COPY --from=builder ${DEPENDENCY}/META-INF ./META-INF/
+COPY --from=builder ${DEPENDENCY}/BOOT-INF/classes ./
+ENTRYPOINT ["java", "-cp", ".:lib/*", "com.assookkaa.ClassRecordApplication"]

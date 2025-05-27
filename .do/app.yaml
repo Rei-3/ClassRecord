@@ -1,46 +1,39 @@
-# Basic App Configuration
-name: classrecord-api         # App name in DigitalOcean
-region: sfo3                  # Preferred region (sfo3 is San Francisco)
+name: classrecord-api
+region: sfo3
 services:
-  - name: backend             # Your Spring Boot service
+  - name: backend
     github:
-      branch: master          # Auto-deploy on pushes to main
-      deploy_on_push: true    # Enable CI/CD
-    source_dir: /             # Root directory of your repo
-
-    # Build & Runtime
-    dockerfile_path: Dockerfile  # Uses Docker for reliable builds (recommended)
-    # Alternative if not using Docker:
-    # build_command: ./mvnw clean package -DskipTests
-    # run_command: java -jar target/ClassRecord-*.jar
-
-    # Resource Allocation
-    instance_size_slug: basic-xxs  # Cheapest tier ($5/month)
-    instance_count: 1              # Single instance
-    http_port: 8080                # Spring Boot's default port
-
-    # Environment Variables
+      branch: master
+      deploy_on_push: true
+    source_dir: /
+    dockerfile_path: Dockerfile  # Use Docker for reliability
+    
+    # Resource settings
+    instance_size_slug: basic-xxs
+    instance_count: 1
+    http_port: 8080
+    
+    # Environment variables
     envs:
       - key: SPRING_PROFILES_ACTIVE
-        value: prod               # Activates production profile
+        value: prod
       - key: JAVA_OPTS
-        value: -Xmx512m -Xms256m  # JVM memory limits
+        value: -Xmx512m -Xms256m
       - key: DATABASE_URL
-        scope: RUN_TIME           # Injected at runtime
-        value: ${db.DATABASE_URL} # Linked to database below
-
-    # Health Checks (Critical for production)
+        scope: RUN_TIME
+        type: SECRET  # Mark as sensitive
+        value: ${db.DATABASE_URL}
+    
+    # Health check (requires actuator)
     health_check:
-      http_path: /actuator/health  # Spring Boot Actuator endpoint
+      http_path: /actuator/health
       port: 8080
-      initial_delay_seconds: 30
-      period_seconds: 10
+      initial_delay_seconds: 60  # Increased for Spring Boot startup
+      period_seconds: 15
 
-# Database Configuration (MariaDB)
 databases:
   - name: db
     engine: MARIADB
-    version: "10.11"             # Matches your pom.xml
-    production: false            # Set to true for prod
-    instance_size_slug: db-s-dev-database  # $15/month dev DB
-    instance_count: 1
+    version: "10.11"
+    production: false
+    instance_size_slug: db-s-dev-database
