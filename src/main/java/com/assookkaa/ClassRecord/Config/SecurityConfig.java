@@ -40,7 +40,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "api/auth/**",
-                                "/helloworld",
+                                "/hello-world",
                                 "/show-choices/**").permitAll()
                         .requestMatchers("/api/teacher/**").hasRole("TEACHER")
                         .requestMatchers("/api/student/**").hasRole("STUDENT")
