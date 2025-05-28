@@ -239,21 +239,8 @@ public class GradingFunc extends Super implements GradingFuncInterface {
                         }
                 ));
         //final grade these are with weights
-        BigDecimal finalGrade = categoryWeightsLoadId.entrySet().stream()
-                .map(entry -> {
-                    Integer categoryId = entry.getKey();
-                    Double weight = entry.getValue();
-                    Integer totalItems = totalItemsPerCat.getOrDefault(categoryId, 0);
-                    BigDecimal totalScores = totalScoresPerCat.getOrDefault(categoryId, BigDecimal.ZERO);
-
-                    return totalItems > 0
-                            ? totalScores
-                            .divide(BigDecimal.valueOf(totalItems), 2, RoundingMode.HALF_UP)
-                            .multiply(BigDecimal.valueOf(100))
-                            .multiply(BigDecimal.valueOf(weight))
-                            .setScale(1, RoundingMode.HALF_UP)
-                            : BigDecimal.ZERO;
-                }).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal finalGrade = categoryGradeRaw.values().stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal NORSUgrade;
 
@@ -433,22 +420,8 @@ public class GradingFunc extends Super implements GradingFuncInterface {
                                     : BigDecimal.ZERO;
                         }
                 ));
-        BigDecimal finalGrade = categoryWeightsLoadId.entrySet().stream()
-                .map(entry -> {
-                    Integer categoryId = entry.getKey();
-                    Double weight = entry.getValue();
-
-                    Integer totalItems = totalItemsPerCat.getOrDefault(categoryId, 0);
-                    BigDecimal totalScores = totalScoresPerCat.getOrDefault(categoryId, BigDecimal.ZERO);
-
-                    return totalItems > 0
-                            ? totalScores
-                            .divide(BigDecimal.valueOf(totalItems), 2, RoundingMode.HALF_UP)
-                            .multiply(BigDecimal.valueOf(100))
-                            .multiply(BigDecimal.valueOf(weight))
-                            .setScale(0, RoundingMode.HALF_UP)
-                            : BigDecimal.ZERO;
-                }).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal finalGrade = getRawGrade.values().stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal NORSUgrade;
 

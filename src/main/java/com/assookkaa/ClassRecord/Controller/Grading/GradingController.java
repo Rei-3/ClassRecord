@@ -86,7 +86,7 @@ public class GradingController {
     @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/details/{gradingId}")
     public ResponseEntity<List<GradingDetailsResponse>> details (@RequestHeader("Authorization") String token,
-                                                           @PathVariable("gradingId") Integer gradingId,
+                                                                 @PathVariable("gradingId") Integer gradingId,
                                                                  @RequestHeader("API_KEY") String apiKey,
                                                                  @RequestHeader("SECRET_KEY") String clientSecretKey) {
 
