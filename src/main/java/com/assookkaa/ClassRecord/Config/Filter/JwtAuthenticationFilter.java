@@ -46,8 +46,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        final String apiKeyHeader= request.getHeader("API_KEY");
-        final String secretKeyHeader= request.getHeader("SECRET_KEY");
+//        final String apiKeyHeader= request.getHeader("API_KEY");
+//        final String secretKeyHeader= request.getHeader("SECRET_KEY");
 
         final String token;
         final String username;
@@ -55,10 +55,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         logger.info("Incoming Request: {} {}", request.getMethod(), request.getRequestURI());
 
         //key
-        if (!apiKey.equals(apiKeyHeader) || !secretKey.equals(secretKeyHeader)) {
-            logger.warn("Invalid API credentials.");
-            throw new RuntimeException("Invalid API credentials.");
-        }
+//        if (!apiKey.equals(apiKeyHeader) || !secretKey.equals(secretKeyHeader)) {
+//            logger.warn("Invalid API credentials.");
+//            throw new RuntimeException("Invalid API credentials.");
+//        }
 
         // Validate JWT
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
