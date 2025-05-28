@@ -21,8 +21,8 @@ public class JwtUtil {
     private final UserRepository userRepository;
     private SecretKey secretKey;
 
-//    @Value("${api.jwtSecret}")
-    String secret ="6IUgrywWvzIXThAqSTxQfqORJxeW2wonn7OlizjVSdifJfi2FhQWdrW=CPxeCktJ8QC3h";
+    @Value("${api.jwtSecret}")
+    String secret;
 
     public JwtUtil(UserRepository userRepository) {
         this.userRepository = userRepository;

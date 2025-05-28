@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @SpringBootApplication
-@EnableAsync
 public class ClassRecordApplication {
 
 	public static void main(String[] args) {
