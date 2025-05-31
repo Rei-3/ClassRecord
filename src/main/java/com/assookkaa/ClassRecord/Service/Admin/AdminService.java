@@ -110,6 +110,7 @@ public class AdminService implements AdminInterface {
                     }
 
                     return TeacherAllDetails.builder()
+                            .id(t.getId())
                             .fname(t.getFname())
                             .mname(t.getMname())
                             .lname(t.getLname())
